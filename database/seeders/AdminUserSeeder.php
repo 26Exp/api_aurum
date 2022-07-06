@@ -18,7 +18,7 @@ class AdminUserSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'email' => 'admin@aurum.md',
-            'password' => bcrypt('win32points'),
+            'password' => bcrypt(env('ADMIN_PASSWORD')),
             'role' => User::ROLE_ADMIN,
         ]);
     }
