@@ -35,4 +35,5 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class,'logout']);
     });
 
+    Route::get('1C/sync', [\App\Http\Controllers\ProductController::class,'sync']);
 });
