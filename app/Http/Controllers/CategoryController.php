@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteCategoryRequest;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 
 class CategoryController extends Controller
 {
@@ -43,8 +42,9 @@ class CategoryController extends Controller
      * @param Category $category
      * @return bool
      */
-    public function destroy(Category $category):bool
+    public function destroy(DeleteCategoryRequest $request, int $category_id): bool
     {
-        return $category->delete() ? true : false;
+        return Category::find($category_id)->delete() ?? false;
     }
+
 }
