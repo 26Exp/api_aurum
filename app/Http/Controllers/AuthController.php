@@ -33,7 +33,7 @@ class AuthController extends Controller
     public function register(StoreUserRequest $request){
         $fields = $request->validated();
 
-        $user = User::create([
+        User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
             'phone' => $request->get('phone'),
@@ -52,7 +52,7 @@ class AuthController extends Controller
     public function login(AuthUserRequest $request){
         $credentials = $request->validated();
 
-        if (!$token = auth()->attempt($credentials)) {
+        if (!auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 

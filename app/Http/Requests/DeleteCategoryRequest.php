@@ -15,7 +15,7 @@ class DeleteCategoryRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::user()->role == User::ROLE_ADMIN ? true : false;
+        return Auth::user()->role === User::ROLE_ADMIN;
     }
 
     /**
