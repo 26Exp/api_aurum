@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Language;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCategoryRequest extends FormRequest
@@ -23,10 +24,15 @@ class StoreCategoryRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'name_ru'   => 'required|string|max:255',
-            'name_ro'   => 'required|string|max:255',
+        $rules = [
             'parent_id' => 'nullable|integer|exists:categories,id',
         ];
+
+        return Language::generateRules([
+            'name' => 'required|min:3|max:50',
+            'description' => 'required',
+            'meta_title' => 'required|min:3|max:'. config('custom.page.meta_title_max_length'),
+            'meta_description' => 'required|min:8|max:'. config('custom.page.meta_description_max_length'),
+        ], $rules);
     }
 }

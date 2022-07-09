@@ -6,7 +6,13 @@ use App\Http\Requests\DeleteCategoryRequest;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Models\CategoryTranslation;
+use App\Models\Language;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
+use Laravel\Sanctum\Guard;
 
 class CategoryController extends Controller
 {
@@ -24,6 +30,24 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request): Category
     {
+        $category = Category::create($request->validated());
+
+
+        foreach (Language::all() as $language) {
+            dd($category->byLanguage($language));
+            CategoryTranslation::create([
+                'category_id' => 1,
+                'locale' => $language->code,
+                'name' => $request->get('name_'.$language->code),
+                'slug' => CategoryController::generateSlug($request->get('name_'.$language->code), $language),
+                'description' => $request->get('description_' .$language->code),
+                'meta_title' => $request->get('meta_title_' .$language->code),
+                'meta_description' => $request->get('meta_description_' .$language->code),
+            ]);
+
+            return $category->getTranslation($language->code);
+        }
+
         return Category::create($request->all());
     }
 
@@ -47,4 +71,19 @@ class CategoryController extends Controller
         return Category::find($category_id)->delete() ?? false;
     }
 
+    /**
+     * @param string $title
+     * @param int $id
+     * @param Language $lang
+     * @return string
+     */
+    static public function generateSlug(string $title, Language $lang): string
+    {
+        $slug = Str::slug($title, '-', $lang->code);
+        if (CategoryTranslation::where('slug', $title)->where('locale', $lang->code )->exists()) {
+            $slug = $slug . '-' . rand(1, 100);
+        }
+
+        return $slug;
+    }
 }
