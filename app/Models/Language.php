@@ -11,4 +11,6 @@ class Language extends Model
 
     public $timestamps = false;
     protected $fillable = ['code', 'name'];
+    public const LOCALE_RU = 'ru';
+    public const LOCALE_RO = 'ro';
 }

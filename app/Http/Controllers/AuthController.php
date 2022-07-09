@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\UserCreated;
 use App\Http\Requests\AuthUserRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Models\Language;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,7 +40,7 @@ class AuthController extends Controller
             'phone' => $request->get('phone'),
             'password' => bcrypt($fields['password']),
             'role' => 1,
-            'locale' => $request->get('locale') ?? 'ru',
+            'locale' => $request->get('locale') ?? Language::LOCALE_RU,
         ]);
 
         return response($this->authorized(), 201);
