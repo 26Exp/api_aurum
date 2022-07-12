@@ -21,22 +21,26 @@ class CategoryController extends Controller
      */
     public function index(): Collection
     {
-        return Category::all();
+        $categories = Category::all();
+//
+        foreach ($categories as $category) {
+            $category->setAttribute('info', $category->getTranslated());
+        }
+
+        return $categories;
     }
 
     /**
      * @param StoreCategoryRequest $request
      * @return Category
      */
-    public function store(StoreCategoryRequest $request): Category
+    public function store(StoreCategoryRequest $request): CategoryTranslation
     {
         $category = Category::create($request->validated());
 
-
         foreach (Language::all() as $language) {
-            dd($category->byLanguage($language));
             CategoryTranslation::create([
-                'category_id' => 1,
+                'category_id' => $category->id,
                 'locale' => $language->code,
                 'name' => $request->get('name_'.$language->code),
                 'slug' => CategoryController::generateSlug($request->get('name_'.$language->code), $language),
@@ -44,11 +48,9 @@ class CategoryController extends Controller
                 'meta_title' => $request->get('meta_title_' .$language->code),
                 'meta_description' => $request->get('meta_description_' .$language->code),
             ]);
-
-            return $category->getTranslation($language->code);
         }
 
-        return Category::create($request->all());
+        return $category->setAttribute('info', $category->getTranslated());
     }
 
     /**
@@ -80,7 +82,7 @@ class CategoryController extends Controller
     static public function generateSlug(string $title, Language $lang): string
     {
         $slug = Str::slug($title, '-', $lang->code);
-        if (CategoryTranslation::where('slug', $title)->where('locale', $lang->code )->exists()) {
+        if (CategoryTranslation::where('slug', $slug)->exists()) {
             $slug = $slug . '-' . rand(1, 100);
         }
 
