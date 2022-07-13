@@ -21,13 +21,7 @@ class CategoryController extends Controller
      */
     public function index(): Collection
     {
-        $categories = Category::all();
-//
-        foreach ($categories as $category) {
-            $category->setAttribute('info', $category->getTranslated());
-        }
-
-        return $categories;
+        return Category::all();
     }
 
     /**
