@@ -17,9 +17,9 @@ class Category extends Model
     protected $casts = [
         'parent_id' => 'integer',
     ];
-    protected $with = ['CategoryTranslations'];
+    protected $with = ['translations'];
 
-    public function CategoryTranslations()
+    public function translations()
     {
         return $this->hasMany(CategoryTranslation::class);
     }

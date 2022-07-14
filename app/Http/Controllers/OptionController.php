@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOptionRequest;
 use App\Http\Requests\UpdateOptionRequest;
+use App\Models\Category;
 use App\Models\Language;
 use App\Models\Option;
 use App\Models\OptionTranslation;
@@ -67,5 +68,15 @@ class OptionController extends Controller
         Option::destroy($option->id);
 
         return response()->json(['message' => 'Deleted']);
+    }
+
+    /**
+     * Return all options for a category.
+     * @param int $category_id
+     * @return Collection
+     */
+    public function byCategory(int $category_id): Collection
+    {
+        return Option::where('category_id', $category_id)->get();
     }
 }

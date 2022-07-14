@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class,'logout']);
 
         Route::resource('/categories', CategoryController::class);
+        Route::get('/options/category/{category}', [OptionController::class,'byCategory']);
         Route::resource('/options', OptionController::class);
     });
 

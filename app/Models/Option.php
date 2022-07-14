@@ -18,9 +18,9 @@ class Option extends Model
     protected $casts = [
         'category_id' => 'integer',
     ];
-    protected $with = ['OptionTranslations'];
+    protected $with = ['translations'];
 
-    public function OptionTranslations(): HasMany
+    public function translations(): HasMany
     {
         return $this->hasMany(OptionTranslation::class);
     }
