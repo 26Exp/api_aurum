@@ -20,6 +20,6 @@ class Images extends Model
 
     public function getPathAttribute()
     {
-        return '/images/'.$this->attributes['path'];
+        return '/images/uploads/'.$this->attributes['path'];
     }
 }

@@ -31,7 +31,7 @@ class ImagesController extends Controller
         $image = $request->file('image');
         $extension = pathinfo($image->getClientOriginalName(), PATHINFO_EXTENSION);
         $fileName = time() . '.' . $extension;
-        $image->move(public_path('images'), $fileName);
+        $image->move(public_path('images/uploads'), $fileName);
         $image = new Images();
         $image->path = $fileName;
         $image->user_id = Auth::user()->id;
