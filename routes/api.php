@@ -3,6 +3,7 @@
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\OptionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 // Guest routes
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class,'register']);
-    Route::post('/login', [AuthController::class,'login']);
+    Route::post('/login', [AuthController::class,'login'])->name('login');
 });
 
 
@@ -36,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('admin')->group(function () {
+        Route::resource('/images', ImagesController::class);
         Route::get('/user', [AuthController::class,'user']);
         Route::post('/logout', [AuthController::class,'logout']);
 
