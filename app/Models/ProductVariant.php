@@ -13,4 +13,14 @@ class ProductVariant extends Model
         'product_variation_id',
         'option_id',
     ];
+    protected $appends = array('option');
+    public function getOptionAttribute()
+    {
+        return $this->hasOne(Option::class, 'id', 'option_id')->get();
+    }
+
+    public function compactMode(): int
+    {
+        return $this->id;
+    }
 }

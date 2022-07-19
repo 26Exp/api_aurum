@@ -15,4 +15,22 @@ class ProductVariation extends Model
         'stock',
         'price',
     ];
+    protected $appends = array('variants');
+    public function getVariantsAttribute()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_variation_id', 'id')->get();
+    }
+
+    public function compactMode(): array
+    {
+        return [
+                'id' => $this->id,
+                'sku' => $this->sku,
+                'stock' => $this->stock,
+                'price' => $this->price,
+                'options' => $this->variants->map(function ($variant) {
+                    return $variant->compactMode();
+                })->toArray(),
+            ];
+    }
 }

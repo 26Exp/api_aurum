@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/options', OptionController::class);
         Route::resource('/variations', ProductVariationController::class);
         Route::resource('/vendors', VendorController::class);
+        Route::resource('/products', ProductController::class);
     });
 
     Route::get('1C/sync', [ProductController::class,'sync']);

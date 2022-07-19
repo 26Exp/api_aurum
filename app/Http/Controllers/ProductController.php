@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\CategoryTranslation;
+use App\Models\Language;
 use App\Models\Product;
+use App\Models\ProductTranslation;
+use App\Models\ProductVariant;
+use App\Models\ProductVariation;
 
 class ProductController extends Controller
 {
@@ -19,24 +24,53 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param StoreProductRequest $request
+     * @return mixed
      */
-    public function create()
+    public function store(StoreProductRequest $request): array
     {
-        //
-    }
+        $product = Product::create($request->validated());
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreProductRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreProductRequest $request)
-    {
-        //
+        foreach (Language::all() as $language) {
+            ProductTranslation::create([
+                'product_id' => (int)$product->id,
+                'locale' => (string)$language->code,
+                'name' => (string)$request->get('name_'.$language->code),
+                'description' => (string)$request->get('description_' .$language->code),
+                'meta_title' => (string)$request->get('meta_title_' .$language->code) ?? $request->get('name_'.$language->code),
+                'meta_description' => (string)$request->get('meta_description_' .$language->code) ?? '',
+                'out_of_stock_text' => (string)$request->get('out_of_stock_text_' .$language->code) ?? '',
+            ]);
+        }
+
+        $variants = json_decode($request->input('variations'));
+        foreach ($variants as $variant) {
+            //check if exist variant with this sku
+            if (!ProductVariation::where('sku', $variant->sku)->exists())
+            {
+                $variation = ProductVariation::create([
+                    'product_id' => $product->id,
+                    'sku' => (int)$variant->sku,
+                    'price' => (float)$variant->price,
+                    'stock' => (int)$variant->stock,
+                ]);
+
+                foreach ($variant->options as $option) {
+                    ProductVariant::create([
+                        'product_variation_id' => $variation->id,
+                        'option_id' => $option,
+                    ]);
+                }
+            }
+
+        }
+
+        if (!count($product->compactMode()['variations'])) {
+            $product->delete();
+            return ['message' => 'Product has no variations and was deleted'];
+        }
+
+        return $product->compactMode();
     }
 
     /**
@@ -47,7 +81,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return $product->compactMode();
     }
 
     /**
