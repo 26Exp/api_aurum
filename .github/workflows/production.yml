@@ -1,0 +1,64 @@
+name: Laravel CI/CD
+on:
+  push:
+    branches:
+    - develop
+jobs:
+  Deploying:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔎 Check IP
+        run: curl https://api.ipify.org
+      - name: CD via SSH Private Key
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            cd ${{ secrets.SSH_DIR }}
+            echo "Deploying application ..."
+
+            # Enter in maintenance mode Laravel & refresh user page after 5 seconds
+            (php artisan down --refresh=5) || true
+
+            # Update codebase
+            git fetch origin master
+            git reset --hard origin/master
+
+            # Install composer dependencies
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+            composer u --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+            # Clear the old cache
+            php artisan cache:clear
+            php artisan config:clear
+            php artisan route:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan optimize
+            php artisan clear-compiled
+
+            # Create .env if not exist
+            php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+            # Migrate database
+            php artisan migrate --force
+
+            # Generate key
+            php artisan key:generate
+
+            # Directory Permissions
+            chmod -R 777 storage bootstrap/cache
+
+            # Recreate cache
+            php artisan optimize
+
+            # Got up
+            php artisan up
+            # test
+            php artisan down
+
+            echo "✅✅✅ Application deployed!"
+          host: ${{ secrets.SSH_HOST }}
+          user: ${{ secrets.SSH_USER }}
+          pass: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          args: "-tt"
