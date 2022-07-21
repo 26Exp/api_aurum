@@ -13,8 +13,6 @@ jobs:
           command: |
             cd ${{ secrets.SSH_DIR }}
             echo "Deploying application ..."
-            
-            php artisan env:set APP_ENV "local"
 
             # Enter in maintenance mode Laravel & refresh user page after 5 seconds
             (php artisan down --refresh=5) || true
@@ -50,10 +48,6 @@ jobs:
             
             # Recreate cache
             php artisan optimize
-            
-            # Reload PHP to update opcache
-            echo "" | sudo -S service php-fpm-80 reload
-        
             
             # Got up
             php artisan up
