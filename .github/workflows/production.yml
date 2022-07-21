@@ -53,6 +53,8 @@ jobs:
             
             # Got up
             php artisan up
+            # test
+            php artisan down 
               
             echo "✅✅✅ Application deployed!"
           host: ${{ secrets.SSH_HOST }}
