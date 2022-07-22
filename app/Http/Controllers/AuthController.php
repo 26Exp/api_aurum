@@ -20,15 +20,14 @@ class AuthController extends Controller
     public function authorized(?int $userId = 0): array
     {
         if ($userId > 0) {
-            $token = User::findOrFail($userId)->createToken('AppToken')->plainTextToken;
+            $user = User::findOrFail($userId);
         } else {
-            $token = auth()->user()->createToken('AppToken')->plainTextToken;
+            $user = auth()->user();
         }
-        $token = auth()->user()->createToken('AppToken')->plainTextToken;
 
         return [
-            'user' => auth()->user()->getUserProfile(),
-            'token' => $token
+            'user' => $user->getUserProfile(),
+            'token' => $user->createToken('AppToken')->plainTextToken
         ];
     }
 
