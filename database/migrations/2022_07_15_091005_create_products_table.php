@@ -29,7 +29,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')
                    ->foreignId('users')
                    ->constrained();
-            $table->boolean('hasCustomMessage')->default(false);
+            $table->boolean('has_custom_message')->default(false);
 
             $table->integer('status')->default(Product::STATUS_DRAFT);
             $table->timestamps();

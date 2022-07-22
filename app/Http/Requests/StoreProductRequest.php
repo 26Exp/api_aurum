@@ -32,7 +32,7 @@ class StoreProductRequest extends FormRequest
             'vendor_id' => 'required|integer|exists:vendors,id',
             'discount_id' => 'nullable|integer|exists:discounts,id',
             'status' => 'required|in:' . implode(',', Product::STATUSES),
-            'hasCustomMessage' => 'required|boolean',
+            'has_custom_message' => 'required|boolean',
             'meta_keywords' => 'nullable|string',
             'variations' => 'json',
         ];

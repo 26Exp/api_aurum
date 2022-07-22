@@ -15,7 +15,7 @@ class Product extends Model
         'vendor_id',
         'discount_id',
         'user_id',
-        'hasCustomMessage',
+        'has_custom_message',
         'status',
     ];
 
@@ -24,7 +24,7 @@ class Product extends Model
         'vendor_id' => 'integer',
         'discount_id' => 'integer',
         'user_id' => 'integer',
-        'hasCustomMessage' => 'boolean',
+        'has_custom_message' => 'boolean',
         'status' => 'integer',
     ];
 
@@ -62,7 +62,7 @@ class Product extends Model
             'category' => $this->category_id,
             'vendor_id' => $this->vendor_id,
             'status' => $this->status,
-            'hasCustomMessage' => $this->hasCustomMessage,
+            'has_custom_message' => $this->has_custom_message,
             'discount_id' => $this->discount_id ?? null,
         ];
         foreach ($this->translation as $translation) {
