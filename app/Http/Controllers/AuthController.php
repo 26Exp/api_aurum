@@ -17,8 +17,13 @@ class AuthController extends Controller
     /**
      * @return array
      */
-    public function authorized()
+    public function authorized(?int $userId = 0): array
     {
+        if ($userId > 0) {
+            $token = User::findOrFail($userId)->createToken('AppToken')->plainTextToken;
+        } else {
+            $token = auth()->user()->createToken('AppToken')->plainTextToken;
+        }
         $token = auth()->user()->createToken('AppToken')->plainTextToken;
 
         return [
@@ -34,7 +39,7 @@ class AuthController extends Controller
     public function register(StoreUserRequest $request){
         $fields = $request->validated();
 
-        User::create([
+        $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
             'phone' => $request->get('phone'),
@@ -43,7 +48,7 @@ class AuthController extends Controller
             'locale' => $request->get('locale') ?? Language::LOCALE_RU,
         ]);
 
-        return response($this->authorized(), 201);
+        return response($this->authorized($user->id), 201);
     }
 
     /**
