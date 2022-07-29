@@ -17,15 +17,29 @@ class Category extends Model
     protected $casts = [
         'parent_id' => 'integer',
     ];
-    protected $with = ['translations'];
+    protected $with = ['ru', 'ro'];
 
-    public function translations()
+    public function ru()
     {
-        return $this->hasMany(CategoryTranslation::class);
+        return $this->hasOne(CategoryTranslation::class, 'category_id', 'id')->where('locale', 'ru');
+    }
+
+    public function ro()
+    {
+        return $this->hasOne(CategoryTranslation::class, 'category_id', 'id')->where('locale', 'ro');
     }
 
     public function getRouteKeyName()
     {
         return 'slug';
     }
+
+    public function compactMode(): array
+    {
+        return [
+            'id' => $this->id,
+            'name_ru' => $this->ru->getName(),
+        ];
+    }
+
 }

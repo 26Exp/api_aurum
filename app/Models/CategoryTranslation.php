@@ -11,4 +11,13 @@ class CategoryTranslation extends Model
     public $timestamps = false;
     protected $fillable = ['category_id', 'name', 'locale', 'slug', 'description', 'meta_title', 'meta_description'];
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
 }

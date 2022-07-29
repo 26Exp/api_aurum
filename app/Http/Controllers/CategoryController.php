@@ -28,7 +28,7 @@ class CategoryController extends Controller
      * @param StoreCategoryRequest $request
      * @return Category
      */
-    public function store(StoreCategoryRequest $request): CategoryTranslation
+    public function store(StoreCategoryRequest $request): Category
     {
         $category = Category::create($request->validated());
 
@@ -44,7 +44,7 @@ class CategoryController extends Controller
             ]);
         }
 
-        return $category->setAttribute('info', $category->getTranslated());
+        return $category->setAttribute('info', $category->compactMode());
     }
 
     /**
@@ -81,5 +81,26 @@ class CategoryController extends Controller
         }
 
         return $slug;
+    }
+
+    /**
+     * @param int $id
+     * @return Category
+     */
+    public function show(int $id): Category
+    {
+        return Category::findOrFail($id);
+    }
+
+
+    /**
+     * @param int $id
+     * @return Category
+     */
+    public function getCompactCategories()
+    {
+        return Category::all()->map(function (Category $category) {
+            return $category->compactMode();
+        });
     }
 }
