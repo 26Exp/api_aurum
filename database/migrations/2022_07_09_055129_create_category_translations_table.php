@@ -20,7 +20,7 @@ return new class extends Migration
                     ->foreignId('categories')
                     ->constrained()
                     ->onDelete('cascade');
-            $table->string('locale')->references('code')->on('locales')->default(Language::LOCALE_RU);
+            $table->string('locale')->default(Language::LOCALE_RU);
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('description')->nullable();

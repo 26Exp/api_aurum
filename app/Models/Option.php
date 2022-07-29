@@ -18,10 +18,21 @@ class Option extends Model
     protected $casts = [
         'category_id' => 'integer',
     ];
-    protected $with = ['translations'];
+    protected $appends = [
+        'name_ru',
+        'name_ro',
+    ];
 
-    public function translations(): HasMany
+    public function getnameRuAttribute()
     {
-        return $this->hasMany(OptionTranslation::class);
+        $x = $this->hasOne(OptionTranslation::class, 'option_id', 'id')->where('locale', 'ru')->select('name', 'option_id');
+        return $x->select('name')->first()['name'] ?? '';
     }
+
+    public function getnameRoAttribute()
+    {
+        $x = $this->hasOne(OptionTranslation::class, 'option_id', 'id')->where('locale', 'ro')->select('name', 'option_id');
+        return $x->select('name')->first()['name'] ?? '';
+    }
+
 }

@@ -10,9 +10,16 @@ class OptionTranslation extends Model
     use HasFactory;
 
     public $timestamps = false;
+
     protected $fillable = [
         'option_id',
         'locale',
         'name',
+    ];
+
+    protected $casts = [
+        'option_id' => 'integer',
+        'locale' => 'string',
+        'name' => 'string',
     ];
 }
