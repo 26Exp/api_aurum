@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/categories', CategoryController::class);
         Route::get('/options/category/{category}', [OptionController::class,'byCategory']);
         Route::resource('/options', OptionController::class);
+        Route::resource('/options_value', \App\Models\ProductOptionValue::class);
         Route::resource('/variations', ProductVariationController::class);
         Route::resource('/vendors', VendorController::class);
         Route::resource('/products', ProductController::class);

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Vendor;
+use App\Models\CategoryTranslation;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class VendorSeeder extends Seeder
+class ProductOptionValueSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,10 +15,6 @@ class VendorSeeder extends Seeder
      */
     public function run()
     {
-        Vendor::create([
-            'name' => 'Aurum INC.',
-            'slug' => 'aurum-inc',
-            'image_id' => 1,
-        ]);
+        //
     }
 }
