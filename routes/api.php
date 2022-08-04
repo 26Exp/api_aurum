@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImagesController;
@@ -42,6 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class,'logout']);
 
         Route::resource('/attributes', AttributeController::class);
+        Route::get('/attributes/{attribute}/values', [AttributeValueController::class,'getAttributeValues']);
+        Route::resource('/attribute-values', AttributeValueController::class);
+
 
     });
 

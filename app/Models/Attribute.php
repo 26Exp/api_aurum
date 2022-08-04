@@ -44,4 +44,12 @@ class Attribute extends Model
         $count = static::whereRaw("slug_$lang RLIKE '^{$slug}(-[0-9]+)?$'")->count();
         return $count ? "{$slug}-{$count}" : $slug;
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function values()
+    {
+        return $this->hasMany(AttributeValue::class);
+    }
 }
