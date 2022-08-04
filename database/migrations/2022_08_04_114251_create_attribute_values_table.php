@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('attribute_id')->index();
             $table->string('name_ru');
             $table->string('name_ro');
+            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
         });
     }
 
