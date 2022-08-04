@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name_ro');
             $table->string('slug_ru');
             $table->string('slug_ro');
-            $table->boolean('is_filterable')->default(false);
+            $table->boolean('is_filterable')->default(true);
         });
     }
 

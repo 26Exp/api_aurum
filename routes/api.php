@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/attributes', AttributeController::class);
         Route::get('/attributes/{attribute}/values', [AttributeValueController::class,'getAttributeValues']);
         Route::resource('/attribute-values', AttributeValueController::class);
+        Route::resource('/categories', CategoryController::class);
 
 
     });
