@@ -4,6 +4,7 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\OptionController;
@@ -49,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/categories', CategoryController::class);
         Route::resource('/manufacturers', ManufacturerController::class);
         Route::resource('/products', ProductController::class);
+        Route::resource('/images', ImageController::class);
     });
 
 //    Route::get('1C/sync', [ProductController::class,'sync']);

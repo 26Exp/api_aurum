@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use function PHPUnit\Framework\isEmpty;
 
 class Product extends Model
 {
@@ -63,6 +65,34 @@ class Product extends Model
         'weight' => 'float',
     ];
 
+    protected $appends = [
+        'images',
+        'manufacturer',
+        'category',
+    ];
+
+    public function getImagesAttribute()
+    {
+        return $this->images()->count() ? $this->images()->get() :
+            [
+                'id' => null,
+                'path' => null,
+                'is_main' => true,
+                'is_dummy' => true,
+                'url' => 'https://dummyimage.com/600x600/a1a1a1/fff',
+            ];
+    }
+
+    public function getManufacturerAttribute()
+    {
+        return $this->manufacturer()->first();
+    }
+
+    public function getCategoryAttribute()
+    {
+        return $this->category()->first();
+    }
+
     protected static function boot(): void
     {
         parent::boot();
@@ -84,4 +114,21 @@ class Product extends Model
         return $count ? "{$slug}-{$count}" : $slug;
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function manufacturer()
+    {
+        return $this->belongsTo(Manufacturer::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class);
+    }
 }
