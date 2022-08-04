@@ -16,6 +16,8 @@ class User extends Authenticatable
     public const ROLE_ADMIN = 2;
     public const ROLE_MANAGER = 3;
 
+    public const LANGUAGE_RU = 'ru';
+    public const LANGUAGE_RO = 'ro';
     /**
      * The attributes that are mass assignable.
      *

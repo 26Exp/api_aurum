@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Language;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,7 +12,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
@@ -23,7 +22,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone')->nullable();
             $table->integer('role')->default(User::ROLE_USER);
-            $table->string('locale')->references('code')->on('locales')->default(Language::LOCALE_RU);
+            $table->string('locale')->default(User::LANGUAGE_RU);
             $table->rememberToken();
             $table->timestamps();
         });
@@ -34,7 +33,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('users');
     }
