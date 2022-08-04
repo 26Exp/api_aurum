@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateAttributeRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateAttributeRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return Auth::user()->isAdmin();
     }
 
     /**
@@ -24,7 +25,9 @@ class UpdateAttributeRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name_ru' => 'required|string|max:255',
+            'name_ro' => 'required|string|max:255',
+            'is_filterable' => 'boolean',
         ];
     }
 }

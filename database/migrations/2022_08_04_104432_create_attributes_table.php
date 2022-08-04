@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('slug_ru');
             $table->string('slug_ro');
             $table->boolean('is_filterable')->default(false);
-            $table->timestamps();
         });
     }
 

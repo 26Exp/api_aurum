@@ -27,6 +27,7 @@ class StoreAttributeRequest extends FormRequest
         return [
             'name_ru' => 'required|string|max:255',
             'name_ro' => 'required|string|max:255',
+            'is_filterable' => 'boolean',
         ];
     }
 }
