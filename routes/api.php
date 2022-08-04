@@ -5,6 +5,7 @@ use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\OptionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
@@ -46,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/attributes/{attribute}/values', [AttributeValueController::class,'getAttributeValues']);
         Route::resource('/attribute-values', AttributeValueController::class);
         Route::resource('/categories', CategoryController::class);
+        Route::resource('/manufacturers', ManufacturerController::class);
 
 
     });
