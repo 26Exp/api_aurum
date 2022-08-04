@@ -38,19 +38,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('admin')->group(function () {
-        Route::resource('/images', ImagesController::class);
         Route::get('/user', [AuthController::class,'user']);
         Route::post('/logout', [AuthController::class,'logout']);
 
-        Route::get('/categories/product', [CategoryController::class,'getCompactCategories']);
-        Route::resource('/categories', CategoryController::class);
-        Route::get('/options/category/{category}', [OptionController::class,'byCategory']);
-        Route::resource('/options', OptionController::class);
-        Route::resource('/options_value', \App\Models\ProductOptionValue::class);
-        Route::resource('/variations', ProductVariationController::class);
-        Route::resource('/vendors', VendorController::class);
-        Route::resource('/products', ProductController::class);
+        Route::resource('/attributes', AttributeController::class);
+
     });
 
-    Route::get('1C/sync', [ProductController::class,'sync']);
+//    Route::get('1C/sync', [ProductController::class,'sync']);
 });
