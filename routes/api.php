@@ -48,8 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/attribute-values', AttributeValueController::class);
         Route::resource('/categories', CategoryController::class);
         Route::resource('/manufacturers', ManufacturerController::class);
-
-
+        Route::resource('/products', ProductController::class);
     });
 
 //    Route::get('1C/sync', [ProductController::class,'sync']);
