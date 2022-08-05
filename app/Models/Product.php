@@ -131,4 +131,12 @@ class Product extends Model
     {
         return $this->hasMany(Image::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(Variant::class);
+    }
 }

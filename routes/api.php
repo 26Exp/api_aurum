@@ -10,6 +10,7 @@ use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\OptionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
+use App\Http\Controllers\VariantController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/manufacturers', ManufacturerController::class);
         Route::resource('/products', ProductController::class);
         Route::resource('/images', ImageController::class);
+        Route::resource('/variants', VariantController::class);
     });
 
 //    Route::get('1C/sync', [ProductController::class,'sync']);
