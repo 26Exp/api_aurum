@@ -12,6 +12,7 @@ use App\Http\Controllers\OptionController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
+use App\Http\Controllers\PromocodeController;
 use App\Http\Controllers\VariantController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Http\Request;
@@ -57,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/variants', VariantController::class);
         Route::resource('/pages', PageController::class);
         Route::resource('/delivery-methods', DeliveryMethodController::class);
+        Route::resource('/promocodes', PromocodeController::class);
 
         Route::get('1C/sync', [ProductController::class,'sync']);
     });
@@ -65,3 +67,4 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/pages/{locale}/{slug}', [PageController::class,'pageByLocaleAndSlug']);
+Route::get('/promocode/{code}', [PromocodeController::class,'checkPromocode']);
