@@ -21,16 +21,45 @@ class Variant extends Model
         'attribute_value_id' => 'integer',
     ];
 
-    protected $appends = ['attribute, attribute_value'];
+    protected $appends = [
+        'slug_ro',
+        'slug_ru',
+        'attribute',
+        'value',
+    ];
 
     public function getAttributeAttribute()
     {
-        return "$this->belongsTo(Attribute::class, 'attribute_id');";
+        return $this->attribute()->first();
     }
-    public function getAttributeValueAttribute()
+
+    public function attribute()
     {
-        return "dw";
+        return $this->belongsTo(Attribute::class, 'attribute_id');
     }
 
+    public function getValueAttribute()
+    {
+        return $this->value()->first();
+    }
 
+    public function value()
+    {
+        return $this->belongsTo(AttributeValue::class, 'attribute_value_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function getSlugRoAttribute()
+    {
+        return $this->product()->pluck('slug_ro')->first();
+    }
+
+    public function getSlugRuAttribute()
+    {
+        return $this->product()->pluck('slug_ru')->first();
+    }
 }

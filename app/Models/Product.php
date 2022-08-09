@@ -69,6 +69,7 @@ class Product extends Model
         'images',
         'manufacturer',
         'category',
+        'variants',
     ];
 
     public function getImagesAttribute()
@@ -132,11 +133,17 @@ class Product extends Model
         return $this->hasMany(Image::class);
     }
 
-    /**
+/**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function variants(): HasMany
     {
         return $this->hasMany(Variant::class);
     }
+
+    public function getVariantsAttribute()
+    {
+        return $this->variants()->get();
+    }
+
 }
