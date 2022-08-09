@@ -93,4 +93,29 @@ class ProductController extends Controller
         $product->delete();
         return response()->json(['message' => 'Product deleted successfully']);
     }
+
+    public function sync()
+    {
+//        $xmlString = file_get_contents(storage_path('app/1C/import.xml'));
+        $xmlString = file_get_contents(storage_path('app/1C/offers.xml'));
+        $xmlObject = simplexml_load_string($xmlString);
+
+        $json = json_encode($xmlObject);
+        $phpArray = json_decode($json, true);
+        $synced = 0;
+
+        foreach ($phpArray["ПакетПредложений"]["Предложения"]["Предложение"] as $item) {
+
+            // Check if exist product with this sku
+            if (Product::where('sku', $item["Артикул"])->exists()) {
+                $product = Product::where('sku', (int)$item['Артикул'])->first();
+                $product->stock = (int)$item['Количество'];
+                $product->price = (int)$item['Цены']['Цена']['ЦенаЗаЕдиницу'];
+                $product->save();
+                $synced++;
+            }
+        }
+
+        return response()->json(['message' => $synced . ' products synced.']);
+    }
 }
