@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Image;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -57,11 +58,28 @@ class ProductController extends Controller
      *
      * @param  \App\Http\Requests\UpdateProductRequest  $request
      * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @return Product
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        $product->update($request->validated());
+
+        $images = Image::with('product')->where('product_id', $product->id)->get();
+        foreach ($images as $image) {
+            if (!in_array($image->id, $request->images)) {
+                $image->delete();
+            }
+        }
+
+        // delete old variants
+        $product->variants()->delete();
+        // create new variants
+        foreach ($request->get('variants') as $variant) {
+            $variant['product_id'] = $product->id;
+            $product->variants()->create($variant);
+        }
+
+        return $product;
     }
 
     /**

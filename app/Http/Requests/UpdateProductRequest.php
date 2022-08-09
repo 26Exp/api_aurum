@@ -45,6 +45,9 @@ class UpdateProductRequest extends FormRequest
             'has_badge' => 'boolean',
             'stock' => 'integer',
             'status' => 'nullable|integer',
+            'variants' => 'nullable|array',
+            'variants.*.attribute_id' => 'required|integer|exists:attributes,id',
+            'variants.*.attribute_value_id' => 'required|integer|exists:attribute_values,id',
         ];
     }
 }
