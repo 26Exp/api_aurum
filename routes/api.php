@@ -8,6 +8,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\OptionController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\VariantController;
@@ -53,9 +54,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/products', ProductController::class);
         Route::resource('/images', ImageController::class);
         Route::resource('/variants', VariantController::class);
+        Route::resource('/pages', PageController::class);
 
         Route::get('1C/sync', [ProductController::class,'sync']);
     });
 
 
 });
+
+Route::get('/pages/{locale}/{slug}', [PageController::class,'pageByLocaleAndSlug']);
