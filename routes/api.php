@@ -4,6 +4,7 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DeliveryMethodController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ManufacturerController;
@@ -55,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/images', ImageController::class);
         Route::resource('/variants', VariantController::class);
         Route::resource('/pages', PageController::class);
+        Route::resource('/delivery-methods', DeliveryMethodController::class);
 
         Route::get('1C/sync', [ProductController::class,'sync']);
     });
