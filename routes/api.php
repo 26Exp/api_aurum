@@ -1,12 +1,16 @@
 <?php
 
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\OptionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
+use App\Http\Controllers\VariantController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,19 +42,18 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('admin')->group(function () {
-        Route::resource('/images', ImagesController::class);
         Route::get('/user', [AuthController::class,'user']);
         Route::post('/logout', [AuthController::class,'logout']);
 
-        Route::get('/categories/product', [CategoryController::class,'getCompactCategories']);
+        Route::resource('/attributes', AttributeController::class);
+        Route::get('/attributes/{attribute}/values', [AttributeValueController::class,'getAttributeValues']);
+        Route::resource('/attribute-values', AttributeValueController::class);
         Route::resource('/categories', CategoryController::class);
-        Route::get('/options/category/{category}', [OptionController::class,'byCategory']);
-        Route::resource('/options', OptionController::class);
-        Route::resource('/options_value', \App\Models\ProductOptionValue::class);
-        Route::resource('/variations', ProductVariationController::class);
-        Route::resource('/vendors', VendorController::class);
+        Route::resource('/manufacturers', ManufacturerController::class);
         Route::resource('/products', ProductController::class);
+        Route::resource('/images', ImageController::class);
+        Route::resource('/variants', VariantController::class);
     });
 
-    Route::get('1C/sync', [ProductController::class,'sync']);
+//    Route::get('1C/sync', [ProductController::class,'sync']);
 });

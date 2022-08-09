@@ -44,7 +44,7 @@ class AuthController extends Controller
             'phone' => $request->get('phone'),
             'password' => bcrypt($fields['password']),
             'role' => 1,
-            'locale' => $request->get('locale') ?? Language::LOCALE_RU,
+            'locale' => $request->get('locale') ?? User::LANGUAGE_RU,
         ]);
 
         return response($this->authorized($user->id), 201);

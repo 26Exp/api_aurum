@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return Auth::user()->isAdmin();
     }
 
     /**
@@ -24,7 +25,29 @@ class UpdateProductRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'category_id' => 'required|exists:categories,id',
+            'manufacturer_id' => 'required|exists:manufacturers,id',
+            'name_ru' => 'required|string|max:255',
+            'name_ro' => 'required|string|max:255',
+            'description_ru' => 'nullable|string|max:255',
+            'description_ro' => 'nullable|string|max:255',
+            'meta_title_ru' => 'required|string|max:255',
+            'meta_description_ru' => 'required|string|max:255',
+            'meta_title_ro' => 'required|string|max:255',
+            'meta_description_ro' => 'required|string|max:255',
+            'images' => 'nullable|array',
+            'price' => 'required|numeric',
+            'sale_price' => 'nullable|numeric',
+            'sku' => 'nullable|string|max:255',
+            'weight' => 'nullable|numeric',
+            'has_variation' => 'boolean',
+            'has_discount' => 'boolean',
+            'has_badge' => 'boolean',
+            'stock' => 'integer',
+            'status' => 'nullable|integer',
+            'variants' => 'nullable|array',
+            'variants.*.attribute_id' => 'required|integer|exists:attributes,id',
+            'variants.*.attribute_value_id' => 'required|integer|exists:attribute_values,id',
         ];
     }
 }

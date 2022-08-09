@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Category extends Model
+class Attribute extends Model
 {
     use HasFactory;
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -16,21 +17,19 @@ class Category extends Model
         'name_ro',
         'slug_ru',
         'slug_ro',
-        'description_ru',
-        'description_ro',
-        'meta_title_ru',
-        'meta_title_ro',
-        'meta_description_ru',
-        'meta_description_ro',
-        'parent_id',
+        'is_filterable',
+    ];
+
+    protected $casts = [
+        'is_filterable' => 'boolean',
     ];
 
     protected static function boot(): void
     {
         parent::boot();
         static::creating(function ($model) {
-            $model->slug_ru = Category::generateSlug($model->name_ru, 'ru');
-            $model->slug_ro = Category::generateSlug($model->name_ro, 'ro');
+            $model->slug_ru = Attribute::generateSlug($model->name_ru, 'ru');
+            $model->slug_ro = Attribute::generateSlug($model->name_ro, 'ro');
         });
     }
 
@@ -44,5 +43,13 @@ class Category extends Model
         $slug = Str::slug($value);
         $count = static::whereRaw("slug_$lang RLIKE '^{$slug}(-[0-9]+)?$'")->count();
         return $count ? "{$slug}-{$count}" : $slug;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function values()
+    {
+        return $this->hasMany(AttributeValue::class);
     }
 }

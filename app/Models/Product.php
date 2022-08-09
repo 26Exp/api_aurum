@@ -4,81 +4,146 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
+use function PHPUnit\Framework\isEmpty;
 
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'category_id',
-        'vendor_id',
-        'discount_id',
-        'user_id',
-        'has_custom_message',
-        'status',
-    ];
-
-    protected $casts = [
-        'category_id' => 'integer',
-        'vendor_id' => 'integer',
-        'discount_id' => 'integer',
-        'user_id' => 'integer',
-        'has_custom_message' => 'boolean',
-        'status' => 'integer',
-    ];
 
     public const STATUS_DRAFT = 0;
     public const STATUS_PUBLISHED = 1;
+    public const HAS_VARIATION = true;
+    public const HAS_NO_VARIATION = false;
+    public const HAS_DISCOUNT = true;
+    public const HAS_NO_DISCOUNT = false;
+    public const HAS_BADGE = true;
+    public const HAS_NO_BADGE = false;
+    public const HAS_IMAGE = true;
+
     public const STATUSES = [
-        self::STATUS_DRAFT,
-        self::STATUS_PUBLISHED,
+        self::STATUS_DRAFT => 'Draft',
+        self::STATUS_PUBLISHED => 'Published',
     ];
 
-    protected $appends = array('translation', 'variations');
+    protected $fillable = [
+        'name_ru',
+        'name_ro',
+        'slug_ru',
+        'slug_ro',
+        'description_ru',
+        'description_ro',
+        'meta_title_ru',
+        'meta_description_ru',
+        'meta_title_ro',
+        'meta_description_ro',
+        'price',
+        'sale_price',
+        'sku',
+        'stock',
+        'status',
+        'has_variation',
+        'manufacturer_id',
+        'category_id',
+        'weight',
+    ];
 
-    public function getTranslationAttribute()
+    protected $casts = [
+        'has_variation' => 'boolean',
+        'has_discount' => 'boolean',
+        'has_badge' => 'boolean',
+        'has_image' => 'boolean',
+        'status' => 'integer',
+        'manufacturer_id' => 'integer',
+        'category_id' => 'integer',
+        'price' => 'float',
+        'stock' => 'integer',
+        'sale_price' => 'float',
+        'images' => 'array',
+        'sku' => 'integer',
+        'weight' => 'float',
+    ];
+
+    protected $appends = [
+        'images',
+        'manufacturer',
+        'category',
+        'variants',
+    ];
+
+    public function getImagesAttribute()
     {
-        return $this->hasMany(ProductTranslation::class, 'product_id', 'id')->get();
+        return $this->images()->count() ? $this->images()->get() :
+            [
+                'id' => null,
+                'path' => null,
+                'is_main' => true,
+                'is_dummy' => true,
+                'url' => 'https://dummyimage.com/600x600/a1a1a1/fff',
+            ];
     }
 
-    public function getVariationsAttribute()
+    public function getManufacturerAttribute()
     {
-        return $this->hasMany(ProductVariation::class, 'product_id', 'id')->get();
+        return $this->manufacturer()->first();
     }
 
-    public static function boot()
+    public function getCategoryAttribute()
+    {
+        return $this->category()->first();
+    }
+
+    protected static function boot(): void
     {
         parent::boot();
         static::creating(function ($model) {
-            $model->user_id = Auth::id();
+            $model->slug_ru = Product::generateSlug($model->name_ru, 'ru');
+            $model->slug_ro = Product::generateSlug($model->name_ro, 'ro');
         });
     }
 
-    public function compactMode(): array
+    /**
+     * @param string $value
+     * @param string $lang
+     * @return string
+     */
+    static function generateSlug(string $value, string $lang): string
     {
-        $response = [
-            'id' => $this->id,
-            'category' => $this->category_id,
-            'vendor_id' => $this->vendor_id,
-            'status' => $this->status,
-            'has_custom_message' => $this->has_custom_message,
-            'discount_id' => $this->discount_id ?? null,
-        ];
-        foreach ($this->translation as $translation) {
-            $response['name_' . $translation->locale] = $translation->name;
-            $response['description_' . $translation->locale] = $translation->description;
-            $response['meta_title_' . $translation->locale] = $translation->meta_title;
-            $response['meta_description_' . $translation->locale] = $translation->meta_description;
-            $response['out_of_stock_text_' . $translation->locale] = $translation->out_of_stock_text;
-            $response['slug_' . $translation->locale] = $translation->slug;
-        }
-
-        $response['variations'] = [];
-        foreach ($this->variations as $variation) {
-            $response['variations'][] = $variation->compactMode();
-        }
-
-        return $response;
+        $slug = Str::slug($value);
+        $count = static::whereRaw("slug_$lang RLIKE '^{$slug}(-[0-9]+)?$'")->count();
+        return $count ? "{$slug}-{$count}" : $slug;
     }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function manufacturer()
+    {
+        return $this->belongsTo(Manufacturer::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class);
+    }
+
+/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(Variant::class);
+    }
+
+    public function getVariantsAttribute()
+    {
+        return $this->variants()->get();
+    }
+
 }

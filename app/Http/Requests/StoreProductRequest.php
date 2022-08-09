@@ -2,9 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Language;
-use App\Models\Product;
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +14,7 @@ class StoreProductRequest extends FormRequest
      */
     public function authorize()
     {
-        return Auth::user()->role === User::ROLE_ADMIN;
+        return Auth::user()->isAdmin();
     }
 
     /**
@@ -27,22 +24,30 @@ class StoreProductRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = [
-            'category_id' => 'required|integer|exists:categories,id',
-            'vendor_id' => 'required|integer|exists:vendors,id',
-            'discount_id' => 'nullable|integer|exists:discounts,id',
-            'status' => 'required|in:' . implode(',', Product::STATUSES),
-            'has_custom_message' => 'required|boolean',
-            'meta_keywords' => 'nullable|string',
-            'variations' => 'json',
+        return [
+            'category_id' => 'required|exists:categories,id',
+            'manufacturer_id' => 'required|exists:manufacturers,id',
+            'name_ru' => 'required|string|max:255',
+            'name_ro' => 'required|string|max:255',
+            'description_ru' => 'nullable|string|max:255',
+            'description_ro' => 'nullable|string|max:255',
+            'meta_title_ru' => 'required|string|max:255',
+            'meta_description_ru' => 'required|string|max:255',
+            'meta_title_ro' => 'required|string|max:255',
+            'meta_description_ro' => 'required|string|max:255',
+            'images' => 'nullable|array',
+            'price' => 'required|numeric',
+            'sale_price' => 'nullable|numeric',
+            'sku' => 'nullable|string|max:255',
+            'weight' => 'nullable|numeric',
+            'has_variation' => 'boolean',
+            'has_discount' => 'boolean',
+            'has_badge' => 'boolean',
+            'stock' => 'integer',
+            'status' => 'nullable|integer',
+            'variants' => 'nullable|array',
+            'variants.*.attribute_id' => 'required|integer|exists:attributes,id',
+            'variants.*.attribute_value_id' => 'required|integer|exists:attribute_values,id',
         ];
-
-        return Language::generateRules([
-            'name' => 'string|required|min:3|max:255',
-            'description' => 'nullable|string',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string|max:255',
-            'out_of_stock_text' => 'nullable|string|max:70',
-        ], $rules);
     }
 }

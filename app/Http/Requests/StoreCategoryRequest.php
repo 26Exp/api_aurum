@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Language;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreCategoryRequest extends FormRequest
 {
@@ -14,7 +14,7 @@ class StoreCategoryRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::user()->isAdmin();
     }
 
     /**
@@ -24,15 +24,16 @@ class StoreCategoryRequest extends FormRequest
      */
     public function rules()
     {
-        $rules = [
-            'parent_id' => 'nullable|integer|exists:categories,id',
+        return [
+            'name_ru' => 'required|string|max:255',
+            'name_ro' => 'required|string|max:255',
+            'description_ru' => 'nullable|string|max:255',
+            'description_ro' => 'nullable|string|max:255',
+            'meta_title_ru' => 'required|string|max:255',
+            'meta_title_ro' => 'required|string|max:255',
+            'meta_description_ru' => 'nullable|string|max:255',
+            'meta_description_ro' => 'nullable|string|max:255',
+            'parent_id' => 'nullable|exists:categories,id',
         ];
-
-        return Language::generateRules([
-            'name' => 'required|min:3|max:50',
-            'description' => 'required',
-            'meta_title' => 'required|min:3|max:'. config('custom.page.meta_title_max_length'),
-            'meta_description' => 'required|min:8|max:'. config('custom.page.meta_description_max_length'),
-        ], $rules);
     }
 }
