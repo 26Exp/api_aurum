@@ -10,6 +10,7 @@ use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\OptionController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\PromocodeController;
@@ -59,6 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/pages', PageController::class);
         Route::resource('/delivery-methods', DeliveryMethodController::class);
         Route::resource('/promocodes', PromocodeController::class);
+        Route::resource('/payment-methods', PaymentMethodController::class);
 
         Route::get('1C/sync', [ProductController::class,'sync']);
     });
@@ -68,3 +70,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/pages/{locale}/{slug}', [PageController::class,'pageByLocaleAndSlug']);
 Route::get('/promocode/{code}', [PromocodeController::class,'checkPromocode']);
+Route::get('/delivery-methods', [DeliveryMethodController::class,'index']);
+Route::get('/payment-methods', [PaymentMethodController::class,'index']);

@@ -24,5 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PageSeeder::class);
         $this->call(DeliveryMethodSeeder::class);
         $this->call(PromocodeSeeder::class);
+        $this->call(PaymentMethodSeeder::class);
     }
 }
