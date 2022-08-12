@@ -16,6 +16,7 @@ use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\PromocodeController;
 use App\Http\Controllers\VariantController;
 use App\Http\Controllers\VendorController;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/categories', CategoryController::class);
         Route::resource('/manufacturers', ManufacturerController::class);
         Route::resource('/products', ProductController::class);
+        Route::get('/products/statuses', [ProductController::class,'getStatuses']);
         Route::resource('/images', ImageController::class);
         Route::resource('/variants', VariantController::class);
         Route::resource('/pages', PageController::class);

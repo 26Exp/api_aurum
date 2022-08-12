@@ -118,4 +118,9 @@ class ProductController extends Controller
 
         return response()->json(['message' => $synced . ' products synced.']);
     }
+
+    public function getStatuses()
+    {
+        return response()->json(['statuses' => Product::STATUSES]);
+    }
 }

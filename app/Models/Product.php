@@ -47,6 +47,9 @@ class Product extends Model
         'manufacturer_id',
         'category_id',
         'weight',
+        'has_custom_msg',
+        'out_of_stock_text_ro',
+        'out_of_stock_text_ru',
     ];
 
     protected $casts = [
@@ -63,12 +66,11 @@ class Product extends Model
         'images' => 'array',
         'sku' => 'integer',
         'weight' => 'float',
+        'has_custom_msg' => 'boolean',
     ];
 
     protected $appends = [
         'images',
-        'manufacturer',
-        'category',
         'variants',
     ];
 
