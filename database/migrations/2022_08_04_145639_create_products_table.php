@@ -29,15 +29,9 @@ return new class extends Migration
             $table->string('meta_title_ro');
             $table->string('meta_description_ro');
             $table->json('images')->nullable();
-            $table->float('price');
-            $table->float('sale_price')->nullable();
-            $table->integer('sku');
-            $table->float('weight')->nullable();
-            $table->boolean('has_variation')->default(false);
             $table->boolean('has_discount')->default(false);
             $table->boolean('has_badge')->default(false);
             $table->boolean('has_custom_msg')->default(false);
-            $table->integer('stock')->default(0);
             $table->integer('status')->default(Product::STATUS_DRAFT);
             $table->string('out_of_stock_text_ro')->nullable();
             $table->string('out_of_stock_text_ru')->nullable();

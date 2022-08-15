@@ -13,12 +13,18 @@ class Variant extends Model
         'product_id',
         'attribute_id',
         'attribute_value_id',
+        'price',
+        'stock',
+        'sku',
     ];
 
     protected $casts = [
         'product_id' => 'integer',
         'attribute_id' => 'integer',
         'attribute_value_id' => 'integer',
+        'price' => 'float',
+        'stock' => 'integer',
+        'sku' => 'string',
     ];
 
     protected $appends = [

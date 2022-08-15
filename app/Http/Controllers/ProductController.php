@@ -28,9 +28,10 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         if (count($request->variants)) {
-            $product = Product::create($request->validated());
+//            $product = Product::create($request->validated());
 
             foreach ($request->variants as $variant) {
+                dd($variant);
                 $variant['product_id'] = $product->id;
                 $product->variants()->create($variant);
             }

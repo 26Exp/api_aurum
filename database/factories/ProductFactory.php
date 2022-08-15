@@ -40,13 +40,7 @@ class ProductFactory extends Factory
         $general = [
             'manufacturer_id' => 1,
             'category_id' => 1,
-            'price' => $this->faker->randomFloat(2, 0, 100),
-            'stock' => $this->faker->numberBetween(0, 100),
-            'sale_price' => $this->faker->randomFloat(2, 0, 100),
-            'sku' => $this->faker->numberBetween(10000, 99999),
             'status' => Product::STATUS_PUBLISHED,
-            'weight' => $this->faker->randomFloat(2, 0, 100),
-            'has_variation' => Product::HAS_NO_VARIATION,
             'has_discount' => Product::HAS_NO_DISCOUNT,
             'has_badge' => Product::HAS_NO_BADGE,
         ];
