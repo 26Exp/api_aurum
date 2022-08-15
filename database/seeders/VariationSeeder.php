@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Variant;
+use App\Models\Variation;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class VariantSeeder extends Seeder
+class VariationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,18 +15,18 @@ class VariantSeeder extends Seeder
      */
     public function run()
     {
-        Variant::create([
+        Variation::create([
             'product_id' => 1,
-            'price' => 10,
-            'stock' => 10,
-            'sku' => 'AUR1',
+            'attribute_id' => 1,
+            'attribute_value_id' => 1,
+            'variant_id' => 1,
         ]);
 
-        Variant::create([
+        Variation::create([
             'product_id' => 1,
-            'price' => 10,
-            'stock' => 10,
-            'sku' => 'AUR2',
+            'attribute_id' => 1,
+            'attribute_value_id' => 2,
+            'variant_id' => 1,
         ]);
     }
 }

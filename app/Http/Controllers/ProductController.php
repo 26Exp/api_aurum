@@ -6,6 +6,8 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Image;
 use App\Models\Product;
+use App\Models\Variant;
+use App\Models\Variation;
 
 class ProductController extends Controller
 {
@@ -28,12 +30,28 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         if (count($request->variants)) {
-//            $product = Product::create($request->validated());
+            $product = Product::create($request->validated());
 
             foreach ($request->variants as $variant) {
-                dd($variant);
+                $ProductVariant = Variant::create([
+                    '__id' => $variant['__id'],
+                    'product_id' => $product->id,
+                    'price' => (double)$variant['price'],
+                    'stock' => (int)$variant['stock'],
+                    'sku' => (string)$variant['sku'],
+                ]);
+
+                    foreach ($variant['attributes'] as $attribute) {
+                        Variation::create([
+                            'product_id' => $product->id,
+                            'attribute_id' => $attribute['id'],
+                            'attribute_value_id' => $attribute['value_id'],
+                            'variant_id' => $ProductVariant->id,
+                        ]);
+                    }
+
                 $variant['product_id'] = $product->id;
-                $product->variants()->create($variant);
+//                $product->variants()->create($variant);
             }
 
         } else {

@@ -11,61 +11,31 @@ class Variant extends Model
     public $timestamps = false;
     protected $fillable = [
         'product_id',
-        'attribute_id',
-        'attribute_value_id',
         'price',
         'stock',
         'sku',
+        '__id',
     ];
 
     protected $casts = [
+        '__id' => 'string',
         'product_id' => 'integer',
-        'attribute_id' => 'integer',
-        'attribute_value_id' => 'integer',
         'price' => 'float',
         'stock' => 'integer',
         'sku' => 'string',
     ];
 
     protected $appends = [
-        'slug_ro',
-        'slug_ru',
-        'attribute',
-        'value',
+        'attributes',
     ];
 
-    public function getAttributeAttribute()
+    public function getAttributesAttribute()
     {
-        return $this->attribute()->first();
+        return $this->attributes()->get();
     }
 
-    public function attribute()
+    public function attributes()
     {
-        return $this->belongsTo(Attribute::class, 'attribute_id');
-    }
-
-    public function getValueAttribute()
-    {
-        return $this->value()->first();
-    }
-
-    public function value()
-    {
-        return $this->belongsTo(AttributeValue::class, 'attribute_value_id');
-    }
-
-    public function product()
-    {
-        return $this->belongsTo(Product::class, 'product_id');
-    }
-
-    public function getSlugRoAttribute()
-    {
-        return $this->product()->pluck('slug_ro')->first();
-    }
-
-    public function getSlugRuAttribute()
-    {
-        return $this->product()->pluck('slug_ru')->first();
+        return $this->hasMany(Variation::class, 'variant_id');
     }
 }
