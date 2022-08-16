@@ -148,4 +148,25 @@ class Product extends Model
         return $this->variants()->get();
     }
 
+
+    public function attachImages(array $images): Product
+    {
+        $imagesArray = [];
+        $isMain = true;
+        foreach ($images as $image_id) {
+            $temporaryImage = TemporaryImage::find((int)$image_id);
+            $imagesArray[] = [
+                'path' => $temporaryImage->path,
+                'is_main' => $isMain,
+                'is_dummy' => false,
+            ];
+            $temporaryImage->delete();
+            $isMain = false;
+        }
+
+        $this->images()->createMany($imagesArray);
+
+        return $this;
+    }
+
 }

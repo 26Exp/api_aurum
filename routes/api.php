@@ -14,6 +14,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\PromocodeController;
+use App\Http\Controllers\TemporaryImageController;
 use App\Http\Controllers\VariantController;
 use App\Http\Controllers\VariationController;
 use App\Http\Controllers\VendorController;
@@ -59,6 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/products', ProductController::class);
         Route::get('/products/statuses', [ProductController::class,'getStatuses']);
         Route::resource('/images', ImageController::class);
+        Route::resource('/temp-images', TemporaryImageController::class);
         Route::resource('/variants', VariantController::class);
         Route::resource('/variations', VariationController::class);
         Route::resource('/pages', PageController::class);

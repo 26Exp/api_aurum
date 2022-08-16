@@ -39,6 +39,7 @@ class StoreProductRequest extends FormRequest
             'out_of_stock_text_ru' => 'nullable|string|max:255',
             'has_custom_msg' => 'boolean',
             'images' => 'nullable|array',
+            'images.*' => 'integer|exists:temporary_images,id',
             'has_discount' => 'boolean',
             'has_badge' => 'boolean',
             'stock' => 'integer',

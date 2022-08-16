@@ -25,12 +25,13 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreProductRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(StoreProductRequest $request)
     {
         if (count($request->variants)) {
             $product = Product::create($request->validated());
+            $product->attachImages($request->images);
 
             foreach ($request->variants as $variant) {
                 $ProductVariant = Variant::create([
@@ -41,24 +42,25 @@ class ProductController extends Controller
                     'sku' => (string)$variant['sku'],
                 ]);
 
-                    foreach ($variant['attributes'] as $attribute) {
-                        Variation::create([
-                            'product_id' => $product->id,
-                            'attribute_id' => $attribute['id'],
-                            'attribute_value_id' => $attribute['value_id'],
-                            'variant_id' => $ProductVariant->id,
-                        ]);
-                    }
+                foreach ($variant['attributes'] as $attribute) {
+                    Variation::create([
+                        'product_id' => $product->id,
+                        'attribute_id' => $attribute['id'],
+                        'attribute_value_id' => $attribute['value_id'],
+                        'variant_id' => $ProductVariant->id,
+                    ]);
+                }
 
                 $variant['product_id'] = $product->id;
-//                $product->variants()->create($variant);
+
             }
 
-        } else {
-            $product = Product::create($request->validated());
         }
 
-        return $product;
+        return response()->json([
+            'message' => 'Product created successfully',
+            'product' => $product,
+        ], 201);
     }
 
     /**
