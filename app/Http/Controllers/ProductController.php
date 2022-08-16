@@ -8,17 +8,77 @@ use App\Models\Image;
 use App\Models\Product;
 use App\Models\Variant;
 use App\Models\Variation;
+use http\Client\Response;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        return Product::all();
+        $default = [
+            'page' => 1,
+            'per_page' => 20,
+            'sort_by' => 'id',
+            'sort_direction' => 'desc',
+        ];
+        $params = array_merge($default, request()->all());
+
+        $products = Product::with('images')
+            ->orderBy($params['sort_by'], $params['sort_direction'])
+            ->paginate($params['per_page']);
+        $products->appends($params);
+
+        return response()->json($products);
+    }
+
+    public function search()
+    {
+        $default = [
+            'page' => 1,
+            'per_page' => 20,
+            'sort_by' => 'id',
+            'sort_direction' => 'desc',
+            'q' => '',
+        ];
+        $params = array_merge($default, request()->all());
+        $products = Product::with('images')
+            ->where('name_ru', 'like', '%'.$params['q'].'%')
+            ->orWhere('name_ro', 'like', '%'.$params['q'].'%')
+            ->orderBy($params['sort_by'], $params['sort_direction'])
+            ->paginate($params['per_page']);
+        $products->appends($params);
+
+        return response()->json($products);
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function searchByCategory(): JsonResponse
+    {
+        $default = [
+            'page' => 1,
+            'per_page' => 20,
+            'sort_by' => 'id',
+            'sort_direction' => 'desc',
+            'q' => '',
+            'category_id' => '',
+        ];
+        $params = array_merge($default, request()->all());
+        $products = Product::with('images')
+            ->where('name_ru', 'like', '%'.$params['q'].'%')
+            ->orWhere('name_ro', 'like', '%'.$params['q'].'%')
+            ->where('category_id', $params['category_id'])
+            ->orderBy($params['sort_by'], $params['sort_direction'])
+            ->paginate($params['per_page'])
+            ->appends($params);
+
+        return response()->json($products);
     }
 
     /**
@@ -31,36 +91,19 @@ class ProductController extends Controller
     {
         if (count($request->variants)) {
             $product = Product::create($request->validated());
-            $product->attachImages($request->images);
+            $product->attachImages($request->images ?? []);
+            $product->attachVariants($request->variants);
 
-            foreach ($request->variants as $variant) {
-                $ProductVariant = Variant::create([
-                    '__id' => $variant['__id'],
-                    'product_id' => $product->id,
-                    'price' => (double)$variant['price'],
-                    'stock' => (int)$variant['stock'],
-                    'sku' => (string)$variant['sku'],
-                ]);
+            return response()->json([
+                'message' => 'Product created successfully',
+                'product' => $product,
+            ], 201);
+        } else {
 
-                foreach ($variant['attributes'] as $attribute) {
-                    Variation::create([
-                        'product_id' => $product->id,
-                        'attribute_id' => $attribute['id'],
-                        'attribute_value_id' => $attribute['value_id'],
-                        'variant_id' => $ProductVariant->id,
-                    ]);
-                }
-
-                $variant['product_id'] = $product->id;
-
-            }
-
+            return response()->json([
+                'message' => 'Variansts are required',
+            ], 422);
         }
-
-        return response()->json([
-            'message' => 'Product created successfully',
-            'product' => $product,
-        ], 201);
     }
 
     /**
@@ -84,21 +127,7 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $product->update($request->validated());
-
-        $images = Image::with('product')->where('product_id', $product->id)->get();
-        foreach ($images as $image) {
-            if (!in_array($image->id, $request->images)) {
-                $image->delete();
-            }
-        }
-
-        // delete old variants
-        $product->variants()->delete();
-        // create new variants
-        foreach ($request->get('variants') as $variant) {
-            $variant['product_id'] = $product->id;
-            $product->variants()->create($variant);
-        }
+        $product->attachImages($request->images ?? []);
 
         return $product;
     }

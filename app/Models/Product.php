@@ -169,4 +169,47 @@ class Product extends Model
         return $this;
     }
 
+    public function attachVariants(array $variants): Product
+    {
+        foreach ($variants as $variant) {
+            $ProductVariant = Variant::create([
+                'name'       => $variant['name'],
+                'product_id' => (int)$this->id,
+                'price'      => (double)$variant['price'],
+                'stock'      => (int)$variant['stock'],
+                'sku'        => (string)$variant['sku'],
+            ]);
+
+            foreach ($variant['attributes'] as $attribute) {
+                Variation::create([
+                    'product_id'         => (int)$this->id,
+                    'attribute_id'       => (int)$attribute['id'],
+                    'attribute_value_id' => (int)$attribute['value_id'],
+                    'variant_id'         => (int)$ProductVariant->id,
+                ]);
+            }
+        }
+
+        return $this;
+    }
+
+    public function updateImages(array $images): Product
+    {
+        $images = $this->images()->get();
+        dd($images);
+        $imagesArray = [];
+        $isMain = true;
+        foreach ($images as $image_id) {
+            $temporaryImage = TemporaryImage::find((int)$image_id);
+            $imagesArray[] = [
+                'path' => $temporaryImage->path,
+                'is_main' => $isMain,
+                'is_dummy' => false,
+            ];
+            $temporaryImage->delete();
+            $isMain = false;
+        }
+        $this->images()->createMany($imagesArray);
+        return $this;
+    }
 }

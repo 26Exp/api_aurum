@@ -58,7 +58,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/categories', CategoryController::class);
         Route::resource('/manufacturers', ManufacturerController::class);
         Route::resource('/products', ProductController::class);
-        Route::get('/products/statuses', [ProductController::class,'getStatuses']);
         Route::resource('/images', ImageController::class);
         Route::resource('/temp-images', TemporaryImageController::class);
         Route::resource('/variants', VariantController::class);
@@ -75,6 +74,9 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('/pages/{locale}/{slug}', [PageController::class,'pageByLocaleAndSlug']);
+Route::get('/products/search', [ProductController::class,'search']);
+Route::get('/products/search-by-category', [ProductController::class,'searchByCategory']);
+
 Route::get('/promocode/{code}', [PromocodeController::class,'checkPromocode']);
 Route::get('/delivery-methods', [DeliveryMethodController::class,'index']);
 Route::get('/payment-methods', [PaymentMethodController::class,'index']);

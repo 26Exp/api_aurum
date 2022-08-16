@@ -14,11 +14,11 @@ class Variant extends Model
         'price',
         'stock',
         'sku',
-        '__id',
+        'name',
     ];
 
     protected $casts = [
-        '__id' => 'string',
+        'name' => 'string',
         'product_id' => 'integer',
         'price' => 'float',
         'stock' => 'integer',
