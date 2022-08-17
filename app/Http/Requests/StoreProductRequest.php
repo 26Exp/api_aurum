@@ -52,6 +52,7 @@ class StoreProductRequest extends FormRequest
             'variants.*.stock' =>'required|integer',
             'variants.*.sku' => 'nullable|unique:variants,sku',
             'variants.*.name' => 'nullable|string|min:3|max:256',
+            'attributes' => 'nullable|array',
         ];
     }
 }

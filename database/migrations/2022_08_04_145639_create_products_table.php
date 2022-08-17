@@ -35,6 +35,7 @@ return new class extends Migration
             $table->integer('status')->default(Product::STATUS_DRAFT);
             $table->string('out_of_stock_text_ro')->nullable();
             $table->string('out_of_stock_text_ru')->nullable();
+            $table->json('attributes')->nullable();
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('manufacturer_id')->references('id')->on('manufacturers')->onDelete('cascade');

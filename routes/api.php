@@ -17,6 +17,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\PromocodeController;
 use App\Http\Controllers\TemporaryImageController;
+use App\Http\Controllers\UserAddressController;
 use App\Http\Controllers\VariantController;
 use App\Http\Controllers\VariationController;
 use App\Http\Controllers\VendorController;
@@ -74,6 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('user')->group(function () {
         Route::resource('/cart', CartItemController::class);
         Route::resource('/favorites', FavoriteController::class);
+        Route::resource('/addresses', UserAddressController::class);
     });
 
 });
