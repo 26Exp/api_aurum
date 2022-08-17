@@ -3,6 +3,7 @@
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AttributeValueController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DeliveryMethodController;
 use App\Http\Controllers\ImageController;
@@ -69,6 +70,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('1C/sync', [ProductController::class,'sync']);
     });
 
+    Route::prefix('user')->group(function () {
+        Route::resource('/cart', CartItemController::class);
+    });
 
 });
 
