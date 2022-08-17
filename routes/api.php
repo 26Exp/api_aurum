@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DeliveryMethodController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ManufacturerController;
@@ -72,6 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('user')->group(function () {
         Route::resource('/cart', CartItemController::class);
+        Route::resource('/favorites', FavoriteController::class);
     });
 
 });

@@ -84,4 +84,11 @@ class User extends Authenticatable
         return $this->hasMany(CartItem::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }
