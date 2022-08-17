@@ -25,11 +25,12 @@ class UpdatePromocodeRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'required|string|unique:promocodes,code,' . $this->route('promocode')->id,
             'discount' => 'required|numeric|min:0|max:100',
             'active' => 'required|boolean',
             'max_uses' => 'nullable|integer|min:0',
             'expires_at' => 'nullable|date_format:Y-m-d H:i:s',
+            'is_percentage' => 'required|boolean',
+            'multiple_use' => 'required|boolean',
         ];
     }
 }

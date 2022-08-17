@@ -66,7 +66,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/delivery-methods', DeliveryMethodController::class);
         Route::resource('/promocodes', PromocodeController::class);
         Route::resource('/payment-methods', PaymentMethodController::class);
-
         Route::get('1C/sync', [ProductController::class,'sync']);
     });
 

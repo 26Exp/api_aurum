@@ -22,6 +22,9 @@ class PromocodeSeeder extends Seeder
             'uses' => 0,
             'max_uses' => null,
             'expires_at' => null,
+            'is_percentage' => false,
+            'multiple_use' => false,
+            'users' => null,
         ]);
 
         Promocode::create([
@@ -31,6 +34,9 @@ class PromocodeSeeder extends Seeder
             'uses' => 0,
             'max_uses' => 0,
             'expires_at' => null,
+            'is_percentage' => true,
+            'multiple_use' => false,
+            'users' => null,
         ]);
     }
 }

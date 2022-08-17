@@ -81,16 +81,23 @@ class PromocodeController extends Controller
     public function checkPromocode($code)
     {
         $promocode = Promocode::where('code', $code)->first();
-        if ($promocode) {
-            if ($promocode->active) {
-                if ($promocode->max_uses == 0 || $promocode->uses < $promocode->max_uses) {
-                    if ($promocode->expires_at == null || $promocode->expires_at > now()) {
-                        return response()->json(['discount' => $promocode->discount]);
-                    }
-                }
+        if ($promocode && $promocode->active) {
+
+            if ($promocode->max_uses && $promocode->uses >= $promocode->max_uses) {
+                return response()->json(['error' => 'Promocode has reached maximum uses'], 400);
             }
+
+            if ($promocode->expires_at && $promocode->expires_at->isPast()) {
+                return response()->json(['error' => 'Promocode has expired'], 400);
+            }
+
+            if ($promocode->users && !$promocode->users->contains(auth()->user())) {
+                return response()->json(['error' => 'Promocode is already use'], 400);
+            }
+
+        } else {
+            return response()->json(['error' => 'Promocode is not active'], 400);
         }
 
-        return response()->json(['error' => 'Promocode not found'], 404);
-    }
+        return response()->json(['discount' => $promocode->discount, 'is_percentage' => $promocode->is_percentage]);}
 }

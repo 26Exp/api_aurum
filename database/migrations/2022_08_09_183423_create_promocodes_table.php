@@ -20,8 +20,10 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->integer('uses')->default(0);
             $table->integer('max_uses')->nullable();
+            $table->boolean('multiple_use')->default(false);
+            $table->boolean('is_percentage')->default(false);
+            $table->json('users')->nullable();
             $table->dateTime('expires_at')->nullable();
-            $table->timestamps();
         });
     }
 

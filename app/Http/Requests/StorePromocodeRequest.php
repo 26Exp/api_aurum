@@ -30,6 +30,8 @@ class StorePromocodeRequest extends FormRequest
             'active' => 'required|boolean',
             'max_uses' => 'nullable|integer|min:0',
             'expires_at' => 'nullable|date_format:Y-m-d H:i:s',
+            'is_percentage' => 'required|boolean',
+            'multiple_use' => 'required|boolean',
         ];
     }
 }
