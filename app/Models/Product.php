@@ -50,6 +50,7 @@ class Product extends Model
         'has_custom_msg',
         'out_of_stock_text_ro',
         'out_of_stock_text_ru',
+        'attributes',
     ];
 
     protected $casts = [
@@ -67,6 +68,7 @@ class Product extends Model
         'sku' => 'integer',
         'weight' => 'float',
         'has_custom_msg' => 'boolean',
+        'attributes' => 'array',
     ];
 
     protected $appends = [
