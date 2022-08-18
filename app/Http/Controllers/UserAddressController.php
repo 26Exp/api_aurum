@@ -38,21 +38,9 @@ class UserAddressController extends Controller
      * @param  \App\Models\UserAddress  $userAddress
      * @return UserAddress
      */
-    public function show(UserAddress $userAddress)
+    public function show(UserAddress $address)
     {
-        return $userAddress;
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\UserAddress  $userAddress
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(UserAddress $userAddress)
-    {
-        //
+        return $address;
     }
 
     /**
@@ -60,21 +48,26 @@ class UserAddressController extends Controller
      *
      * @param  \App\Http\Requests\UpdateUserAddressRequest  $request
      * @param  \App\Models\UserAddress  $userAddress
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateUserAddressRequest $request, UserAddress $userAddress)
+    public function update(UpdateUserAddressRequest $request, UserAddress $address)
     {
-        //
+        $address->update($request->validated());
+        return response()->json($address);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\UserAddress  $userAddress
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(UserAddress $userAddress)
+    public function destroy(UserAddress $address)
     {
-        //
+        // delete address if exists
+        if ($address->exists) {
+            $address->delete();
+        }
+        return response()->json(['message' => 'Address deleted']);
     }
 }
