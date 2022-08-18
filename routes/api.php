@@ -16,6 +16,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariationController;
 use App\Http\Controllers\PromocodeController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\TemporaryImageController;
 use App\Http\Controllers\UserAddressController;
 use App\Http\Controllers\VariantController;
@@ -69,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/delivery-methods', DeliveryMethodController::class);
         Route::resource('/promocodes', PromocodeController::class);
         Route::resource('/payment-methods', PaymentMethodController::class);
+        Route::resource('/stores', StoreController::class);
         Route::get('1C/sync', [ProductController::class,'sync']);
     });
 
@@ -87,3 +89,4 @@ Route::get('/products/search-by-category', [ProductController::class,'searchByCa
 Route::get('/promocode/{code}', [PromocodeController::class,'checkPromocode']);
 Route::get('/delivery-methods', [DeliveryMethodController::class,'index']);
 Route::get('/payment-methods', [PaymentMethodController::class,'index']);
+Route::get('/stores', [StoreController::class,'allStores']);
