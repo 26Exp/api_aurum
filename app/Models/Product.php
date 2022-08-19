@@ -72,11 +72,11 @@ class Product extends Model
     ];
 
     protected $appends = [
-        'images',
+        'uploaded_images',
         'variants',
     ];
 
-    public function getImagesAttribute()
+    public function getUploadedImagesAttribute()
     {
         return $this->images()->count() ? $this->images()->get() :
             [
@@ -185,8 +185,8 @@ class Product extends Model
             foreach ($variant['attributes'] as $attribute) {
                 Variation::create([
                     'product_id'         => (int)$this->id,
-                    'attribute_id'       => (int)$attribute['id'],
-                    'attribute_value_id' => (int)$attribute['value_id'],
+                    'attribute_id'       => (int)$attribute['attribute_id'],
+                    'attribute_value_id' => (int)$attribute['attribute_value_id'],
                     'variant_id'         => (int)$ProductVariant->id,
                 ]);
             }
