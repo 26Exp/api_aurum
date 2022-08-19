@@ -72,18 +72,14 @@ class TemporaryImageController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\TemporaryImage  $temporaryImage
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy(TemporaryImage $temporaryImage)
+
+    public function destroy(TemporaryImage $tempImage)
     {
-        //  Delete the image from the server
-        unlink(public_path('images/uploads/' . $temporaryImage->path));
-        //  Delete the image from the database
-        $temporaryImage->delete();
+        if (file_exists(public_path('images/uploads/' . $tempImage->path))) {
+            unlink(public_path('images/uploads/' . $tempImage->path));
+        }
+        $tempImage->delete();
+
         return response()->json(['message' => 'Image deleted']);
     }
 }
