@@ -20,4 +20,7 @@ class DeliveryMethod extends Model
     protected $casts = [
         'price' => 'float'
     ];
+
+    public const PICKUP = 1;
+    public const SHIPPING = 2;
 }

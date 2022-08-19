@@ -9,6 +9,13 @@ class PaymentMethod extends Model
 {
     use HasFactory;
 
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
+
+    public const CASH = 1;
+    public const CARD = 2;
+
+
     public $timestamps = false;
 
     protected $fillable = [

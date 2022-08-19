@@ -11,6 +11,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\OptionController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProductController;
@@ -70,6 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/delivery-methods', DeliveryMethodController::class);
         Route::resource('/promocodes', PromocodeController::class);
         Route::resource('/payment-methods', PaymentMethodController::class);
+        Route::resource('/orders', OrderController::class);
         Route::resource('/stores', StoreController::class);
         Route::get('1C/sync', [ProductController::class,'sync']);
     });
@@ -90,3 +92,5 @@ Route::get('/promocode/{code}', [PromocodeController::class,'checkPromocode']);
 Route::get('/delivery-methods', [DeliveryMethodController::class,'index']);
 Route::get('/payment-methods', [PaymentMethodController::class,'index']);
 Route::get('/stores', [StoreController::class,'allStores']);
+Route::get('/pay/{order}', [OrderController::class,'pay'])->name('order.pay');
+
