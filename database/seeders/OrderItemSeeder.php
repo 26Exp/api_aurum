@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\UserAddress;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class UserAddressSeeder extends Seeder
+class OrderItemSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,6 +14,6 @@ class UserAddressSeeder extends Seeder
      */
     public function run()
     {
-
+        //
     }
 }

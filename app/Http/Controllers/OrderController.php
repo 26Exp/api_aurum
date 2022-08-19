@@ -119,6 +119,17 @@ class OrderController extends Controller
                 'redirect' => route('order.pay', $order->id),
             ], 201);
         }
+
+        foreach ($request->products as $product) {
+            $order->items()->create([
+                'product_id' => $product['id'],
+                'variation_id' => $product['variant_id'],
+                'quantity' => $product['quantity'],
+                'price' => Variant::find($product['variant_id'])->price,
+                'total' => Variant::find($product['variant_id'])->price * $product['quantity'],
+            ]);
+        }
+
         return response()->json([
             'message' => 'Order created',
             'order' => $order,
@@ -133,6 +144,12 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        // Add order items to order
+        $order->items;
+        $order->address;
+        $order->paymentMethod;
+        $order->deliveryMethod;
+        $order->promocode;
         return response()->json($order);
     }
 

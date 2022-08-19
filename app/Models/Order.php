@@ -56,4 +56,35 @@ class Order extends Model
         'total_price' => 'float',
     ];
 
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(UserAddress::class);
+    }
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
+    public function deliveryMethod()
+    {
+        return $this->belongsTo(DeliveryMethod::class);
+    }
+
+    public function promocode()
+    {
+        return $this->belongsTo(Promocode::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }
