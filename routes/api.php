@@ -94,3 +94,7 @@ Route::get('/payment-methods', [PaymentMethodController::class,'index']);
 Route::get('/stores', [StoreController::class,'allStores']);
 Route::get('/pay/{order}', [OrderController::class,'pay'])->name('order.pay');
 
+
+Route::prefix('payments')->group(function () {
+    Route::post('/callback', [OrderController::class,'paymentCallback'])->name('order.payment.callback');
+});

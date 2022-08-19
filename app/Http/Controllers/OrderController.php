@@ -11,6 +11,7 @@ use App\Models\Promocode;
 use App\Models\Variant;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
@@ -188,6 +189,15 @@ class OrderController extends Controller
 
     public function pay(Order $order)
     {
+       //  show server ip address and other info
+        $ip = $_SERVER['REMOTE_ADDR'];
         return $order;
+    }
+
+    public function paymentCallback(Request $request)
+    {
+        // Save in log file
+        Log::info('Payment callback: ' . json_encode($request->all()));
+        echo 'MAIB callback';
     }
 }
