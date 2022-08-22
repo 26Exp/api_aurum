@@ -190,6 +190,7 @@ class OrderController extends Controller
 
     public function pay(Order $order)
     {
+        dd($order);
        //  show server ip address and other info
         $ip = $_SERVER['REMOTE_ADDR'];
         return $order;
