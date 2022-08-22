@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateOrderRequest;
 use App\Models\DeliveryMethod;
 use App\Models\Order;
 use App\Models\PaymentMethod;
+use App\Models\Product;
 use App\Models\Promocode;
 use App\Models\Variant;
 use Illuminate\Support\Facades\Auth;
@@ -199,5 +200,29 @@ class OrderController extends Controller
         // Save in log file
         Log::info('Payment callback: ' . json_encode($request->all()));
         echo 'MAIB callback';
+    }
+
+    // confirm order
+    public function confirm(Order $order)
+    {
+        // Update stock and status
+        foreach ($order->items as $item) {
+            $variant = Variant::find($item->variation_id);
+            $order->status = Order::STATUS_NEW;
+
+            // check if variant is available
+            if ($variant->stock < $item->quantity) {
+                Log::alert('Order ' . $order->id . ' has been canceled because of not enough stock for variant ' . $variant->id);
+                $order->status = Order::STATUS_ON_HOLD;
+                $order->save();
+            } else {
+                $variant->stock -= $item->quantity;
+                $variant->save();
+            }
+        }
+
+        $order->is_paid = true;
+        $order->save();
+        return true;
     }
 }
