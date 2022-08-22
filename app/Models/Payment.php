@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     use HasFactory;
-    protected $fillable = ['order_id', 'amount', 'result', 'result_code', 'rrn', 'approval_code', 'card_number', 'ip', 'agent', 'all'];
+    protected $fillable = ['transaction_id', 'order_id', 'amount', 'result', 'result_code', 'rrn', 'approval_code', 'card_number', 'ip', 'agent', 'all'];
     protected $casts = [
         'amount' => 'double',
     ];
