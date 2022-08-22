@@ -15,6 +15,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    echo "API is working";
 });
 Route::get('/pay/{order}', [OrderController::class,'pay'])->name('order.pay');
