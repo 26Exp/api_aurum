@@ -6,6 +6,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\DeliveryMethod;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\Promocode;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Redirect;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use GuzzleHttp\Client;
@@ -154,6 +156,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+
         // Add order items to order
         $order->items;
         $order->address;
@@ -198,14 +201,6 @@ class OrderController extends Controller
 
     public function pay(Order $order)
     {
-        if ((isset($log_is_required) && $log_is_required)) {
-            $log = new Logger('maib_guzzle_request');
-            $log->pushHandler(new StreamHandler(__DIR__.'/maib_guzzle_request.log', Logger::DEBUG));
-            $stack = HandlerStack::create();
-            $stack->push(
-                Middleware::log($log, new MessageFormatter(MessageFormatter::DEBUG))
-            );
-        }
 
         $options = [
             'base_uri' => MaibClient::MAIB_TEST_BASE_URI,
@@ -220,18 +215,20 @@ class OrderController extends Controller
                 ]
             ]
         ];
+
         if (isset($stack)) {
             $options['handler'] = $stack;
         }
+
         $guzzleClient = new Client($options);
         $client = new MaibClient($guzzleClient);
 
         // The Parameters required to use MaibClient methods
-        $amount = 1; // The amount of the transaction
-        $currency = 978; // The currency of the transaction - is the 3 digits code of currency from ISO 4217
-        $clientIpAddr = '127.0.0.1'; // The client IP address
-        $description = 'testing'; // The description of the transaction
-        $lang = 'en'; // The language for the payment gateway
+        $amount = $order->total_price; // The amount of the transaction
+        $currency = 498; // The currency of the transaction - is the 3 digits code of currency from ISO 4217
+        $clientIpAddr = \request()->ip();
+        $description = 'Aurum.MD'; // The description of the transaction
+        $lang = 'ru'; // The language for the payment gateway
 
         // Other parameters
         $sms_transaction_id = null;
@@ -239,33 +236,27 @@ class OrderController extends Controller
         $redirect_url = MaibClient::MAIB_TEST_REDIRECT_URL . '?trans_id=';
         $sms_redirect_url = '';
         $dms_redirect_url = '';
-
-        // The Parameters required to use MaibClient methods
-        $amount = 1; // The amount of the transaction
-        $currency = 978; // The currency of the transaction - is the 3 digits code of currency from ISO 4217
-        $clientIpAddr = '127.0.0.1'; // The client IP address
-        $description = 'testing'; // The description of the transaction
-        $lang = 'en'; // The language for the payment gateway
-
-        // Other parameters
-        $sms_transaction_id = null;
-        $dms_transaction_id = null;
-        $redirect_url = MaibClient::MAIB_TEST_REDIRECT_URL . '?trans_id=';
-        $sms_redirect_url = '';
-        $dms_redirect_url = '';
-
 
         // The register dms authorization method
         $registerDmsAuthorization = $client->registerDmsAuthorization($amount, $currency, $clientIpAddr, $description, $lang);
-        dd($registerDmsAuthorization);
+        $trans = $registerDmsAuthorization['TRANSACTION_ID'];
         $dms_transaction_id = $registerDmsAuthorization["TRANSACTION_ID"];
         $dms_redirect_url = $redirect_url . $dms_transaction_id;
 
-        // The execute dms transaction method
-        $makeDMSTrans = $client->makeDMSTrans($dms_transaction_id, $amount, $currency, $clientIpAddr, $description, $lang);
+        $payment = Payment::create([
+            'transaction_id' => $dms_transaction_id,
+            'order_id' => $order->id,
+            'amount' => $amount,
+            'ip' => \request()->ip(),
+            'agent' => \request()->header('User-Agent'),
+        ]);
+        dd($payment);
 
-        dd($makeDMSTrans);
 
+        // Log the payment
+        Log::info('Payment for order ' . $order->id . ' initialized. Total price ' . $order->total_price . ' MDL');
+
+        return Redirect::to($dms_redirect_url);
     }
 
     public function paymentCallback(Request $request)
