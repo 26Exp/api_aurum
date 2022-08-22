@@ -23,6 +23,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\MessageFormatter;
 use Maib\MaibApi\MaibClient;
+use function PHPUnit\Framework\equalToCanonicalizing;
 
 class OrderController extends Controller
 {
@@ -250,7 +251,7 @@ class OrderController extends Controller
             'ip' => \request()->ip(),
             'agent' => \request()->header('User-Agent'),
         ]);
-        dd($payment);
+//        dd($payment);
 
 
         // Log the payment
@@ -261,9 +262,70 @@ class OrderController extends Controller
 
     public function paymentCallback(Request $request)
     {
-        // Save in log file
-        Log::info('Payment callback: ' . json_encode($request->all()));
-        echo 'MAIB callback';
+        if (Payment::where('transaction_id', $request->get('trans_id'))->exists()) {
+            $payment = Payment::where('transaction_id', $request->get('trans_id'))->first();
+
+            $options = [
+                'base_uri' => MaibClient::MAIB_TEST_BASE_URI,
+                'debug' => false,
+                'verify' => true,
+                'cert' => [MaibClient::MAIB_TEST_CERT_URL, MaibClient::MAIB_TEST_CERT_PASS],
+                'ssl_key' => MaibClient::MAIB_TEST_CERT_KEY_URL,
+                'config' => [
+                    'curl' => [
+                        CURLOPT_SSL_VERIFYHOST => 2,
+                        CURLOPT_SSL_VERIFYPEER => true,
+                    ]
+                ]
+            ];
+
+            if (isset($stack)) {
+                $options['handler'] = $stack;
+            }
+
+            $guzzleClient = new Client($options);
+            $client = new MaibClient($guzzleClient);
+            $getTransactionResult = $client->getTransactionResult($payment->transaction_id, $payment->ip);
+
+
+            switch ($getTransactionResult["RESULT"]) {
+                case "CREATED":
+                    Log::info('Payment for order ' . $payment->order_id . ' created. Total price ' . $payment->amount . ' MDL');
+                    break;
+                case "OK":
+                    $order = Order::find($payment->order_id);
+                    $order->is_paid = true;
+                    $order->status = Order::STATUS_NEW;
+                    $order->save();
+                    Log::info('Payment for order ' . $payment->order_id . ' approved. Total price ' . $payment->amount . ' MDL');
+                    break;
+                case "PENDING":
+                    Log::info('Payment for order ' . $payment->order_id . ' is pending. Total price ' . $payment->amount . ' MDL');
+                    break;
+                case "DECLINED":
+                    Log::info('Payment for order ' . $payment->order_id . ' declined. Total price ' . $payment->amount . ' MDL');
+                    break;
+                case "REVERSED":
+                    Log::info('Payment for order ' . $payment->order_id . ' reversed. Total price ' . $payment->amount . ' MDL');
+                    break;
+                case "AUTOREVERSED":
+                    Log::info('Payment for order ' . $payment->order_id . ' autoreversed. Total price ' . $payment->amount . ' MDL');
+                    break;
+                case "TIMEOUT":
+                    Log::info('Payment for order ' . $payment->order_id . ' timed out. Total price ' . $payment->amount . ' MDL');
+                    break;
+            }
+
+            $payment->result = $getTransactionResult['RESULT'];
+            $payment->result_code = $getTransactionResult['RESULT_CODE'] ?? null;
+            $payment->rrn = $getTransactionResult['RRN'] ?? null;
+            $payment->approval_code = $getTransactionResult['APPROVAL_CODE'] ?? null;
+            $payment->card_number = $getTransactionResult['CARD_NUMBER'] ?? null;
+            $payment->all = $request->all();
+            $payment->save();
+        }
+
+        return Redirect::to('https://aurum.md/account/orders');
     }
 
     // confirm order
