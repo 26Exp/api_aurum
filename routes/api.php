@@ -92,7 +92,7 @@ Route::get('/promocode/{code}', [PromocodeController::class,'checkPromocode']);
 Route::get('/delivery-methods', [DeliveryMethodController::class,'index']);
 Route::get('/payment-methods', [PaymentMethodController::class,'index']);
 Route::get('/stores', [StoreController::class,'allStores']);
-Route::get('/pay/{order}', [OrderController::class,'pay'])->name('order.pay');
+
 
 
 Route::prefix('payments')->group(function () {
