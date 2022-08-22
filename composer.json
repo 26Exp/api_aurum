@@ -12,7 +12,8 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.7",
-        "maib/maibapi": "^3.0"
+        "maib/maibapi": "^3.0",
+        "ext-curl": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -26,6 +27,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "Maib\\MaibApi\\": "./vendor/maib/maibapi/src/MaibApi/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }
