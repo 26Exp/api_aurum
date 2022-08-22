@@ -17,4 +17,4 @@ yarn-error.log
 /public/images/uploads/*
 .php-ini
 .php-version
-certs/*
+certs*
