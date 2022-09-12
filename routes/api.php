@@ -47,12 +47,10 @@ Route::prefix('auth')->group(function () {
 
 
 Route::middleware('auth:sanctum')->group(function () {
-
     Route::prefix('auth')->group(function () {
         Route::get('/user', [AuthController::class,'user']);
         Route::post('/logout', [AuthController::class,'logout']);
     });
-
     Route::prefix('admin')->group(function () {
         Route::get('/user', [AuthController::class,'user']);
         Route::post('/logout', [AuthController::class,'logout']);
@@ -75,16 +73,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/stores', StoreController::class);
         Route::get('1C/sync', [ProductController::class,'sync']);
     });
-
     Route::prefix('user')->group(function () {
         Route::resource('/cart', CartItemController::class);
         Route::resource('/favorites', FavoriteController::class);
         Route::resource('/addresses', UserAddressController::class);
     });
-
 });
 
 Route::get('/pages/{locale}/{slug}', [PageController::class,'pageByLocaleAndSlug']);
+Route::get('/{lang}/{slug}', [ProductController::class,'productByLocaleAndSlug']);
+Route::get('/products/', [ProductController::class,'allProducts']);
+
 Route::get('/products/search', [ProductController::class,'search']);
 Route::get('/products/search-by-category', [ProductController::class,'searchByCategory']);
 

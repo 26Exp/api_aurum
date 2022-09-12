@@ -8,6 +8,7 @@ use App\Models\Image;
 use App\Models\Product;
 use App\Models\Variant;
 use App\Models\Variation;
+use Composer\Config;
 use http\Client\Response;
 use Illuminate\Http\JsonResponse;
 
@@ -172,5 +173,50 @@ class ProductController extends Controller
     public function getStatuses()
     {
         return response()->json(['statuses' => Product::STATUSES]);
+    }
+
+    public function allProducts($lang = 'ru')
+    {
+        $default = [
+            'page' => 1,
+            'per_page' => 20,
+            'sort_by' => 'id',
+            'sort_direction' => 'desc',
+        ];
+        $params = array_merge($default, request()->all());
+        $products = Product::where('status', Product::STATUS_PUBLISHED)
+            ->orderBy($params['sort_by'], $params['sort_direction'])
+            ->paginate($params['per_page'])
+            ->appends($params);
+
+        return response()->json($products);
+//        return response()->json($products->map(function ($product) use ($lang) {
+//            $minPrice = $product->variants->min('price');
+//            $maxPrice = $product->variants->max('price');
+//            return [
+//                'id' => $product->id,
+//                'name' => $product->{"name_$lang"},
+//                'slug' => env('APP_URL'). "/product/" .$product->{'slug_' . $lang},
+//                'min_price' => $minPrice,
+//                'max_price' => $maxPrice,
+//                'images' => $product->attachImages($product),
+//            ];
+//        }));
+    }
+
+    /**
+     * @param $lang
+     * @param $slug
+     * @return JsonResponse
+     */
+    public function productByLocaleAndSlug($lang, $slug): JsonResponse
+    {
+        $product = Product::where('slug_' . $lang, $slug)->first();
+        if ($product) {
+            $product->increment('views');
+            return response()->json($product);
+        } else {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
     }
 }

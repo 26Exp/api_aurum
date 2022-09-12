@@ -202,7 +202,6 @@ class OrderController extends Controller
 
     public function pay(Order $order)
     {
-
         $options = [
             'base_uri' => MaibClient::MAIB_TEST_BASE_URI,
             'debug'  => false,
@@ -232,15 +231,10 @@ class OrderController extends Controller
         $lang = 'ru'; // The language for the payment gateway
 
         // Other parameters
-        $sms_transaction_id = null;
-        $dms_transaction_id = null;
         $redirect_url = MaibClient::MAIB_TEST_REDIRECT_URL . '?trans_id=';
-        $sms_redirect_url = '';
-        $dms_redirect_url = '';
 
         // The register dms authorization method
         $registerDmsAuthorization = $client->registerDmsAuthorization($amount, $currency, $clientIpAddr, $description, $lang);
-        $trans = $registerDmsAuthorization['TRANSACTION_ID'];
         $dms_transaction_id = $registerDmsAuthorization["TRANSACTION_ID"];
         $dms_redirect_url = $redirect_url . $dms_transaction_id;
 
@@ -251,8 +245,6 @@ class OrderController extends Controller
             'ip' => \request()->ip(),
             'agent' => \request()->header('User-Agent'),
         ]);
-//        dd($payment);
-
 
         // Log the payment
         Log::info('Payment for order ' . $order->id . ' initialized. Total price ' . $order->total_price . ' MDL');
@@ -260,7 +252,11 @@ class OrderController extends Controller
         return Redirect::to($dms_redirect_url);
     }
 
-    public function paymentCallback(Request $request)
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function paymentCallback(Request $request): Redirect
     {
         if (Payment::where('transaction_id', $request->get('trans_id'))->exists()) {
             $payment = Payment::where('transaction_id', $request->get('trans_id'))->first();
@@ -286,7 +282,6 @@ class OrderController extends Controller
             $guzzleClient = new Client($options);
             $client = new MaibClient($guzzleClient);
             $getTransactionResult = $client->getTransactionResult($payment->transaction_id, $payment->ip);
-
 
             switch ($getTransactionResult["RESULT"]) {
                 case "CREATED":

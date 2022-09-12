@@ -72,7 +72,7 @@ class User extends Authenticatable
             'email'  => $this->email,
             'phone'  => $this->phone,
             'role'   => $this->role,
-            'locale' => $this->locale,
+            'locale' => $this->locale ?? self::LANGUAGE_RU,
         ];
     }
 

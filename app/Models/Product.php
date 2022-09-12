@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Cassandra\Map;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,6 +52,9 @@ class Product extends Model
         'out_of_stock_text_ro',
         'out_of_stock_text_ru',
         'attributes',
+        'views',
+        'min_price',
+        'max_price',
     ];
 
     protected $casts = [
@@ -69,6 +73,9 @@ class Product extends Model
         'weight' => 'float',
         'has_custom_msg' => 'boolean',
         'attributes' => 'array',
+        'views' => 'integer',
+        'min_price' => 'float',
+        'max_price' => 'float',
     ];
 
     protected $appends = [
@@ -105,7 +112,12 @@ class Product extends Model
             $model->slug_ru = Product::generateSlug($model->name_ru, 'ru');
             $model->slug_ro = Product::generateSlug($model->name_ro, 'ro');
         });
+
+        static::updating(function ($model) {
+
+        });
     }
+
 
     /**
      * @param string $value
@@ -137,7 +149,7 @@ class Product extends Model
         return $this->hasMany(Image::class);
     }
 
-/**
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function variants(): HasMany
@@ -212,6 +224,14 @@ class Product extends Model
             $isMain = false;
         }
         $this->images()->createMany($imagesArray);
+        return $this;
+    }
+
+    public function calculatePrice(): Product
+    {
+        $this->min_price = $this->variants()->min('price');
+        $this->max_price = $this->variants()->max('price');
+        $this->save();
         return $this;
     }
 }

@@ -38,4 +38,22 @@ class Variant extends Model
     {
         return $this->hasMany(Variation::class, 'variant_id');
     }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($variant) {
+            $variant->product->calculatePrice();
+        });
+
+        static::updated(function ($variant) {
+            $variant->product->calculatePrice();
+        });
+
+    }
+
 }
