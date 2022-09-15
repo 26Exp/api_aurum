@@ -210,7 +210,6 @@ class Product extends Model
     public function updateImages(array $images): Product
     {
         $images = $this->images()->get();
-        dd($images);
         $imagesArray = [];
         $isMain = true;
         foreach ($images as $image_id) {
@@ -272,5 +271,13 @@ class Product extends Model
         }
 
         return $product;
+    }
+
+    public function upsell()
+    {
+        return Product::where('status', Product::STATUS_PUBLISHED)
+            ->inRandomOrder()
+            ->limit(4)
+            ->get();
     }
 }

@@ -77,15 +77,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::resource('/cart', CartItemController::class);
         Route::resource('/favorites', FavoriteController::class);
         Route::resource('/addresses', UserAddressController::class);
+
+        Route::prefix('orders')->group(function () {
+            Route::post('/create', [OrderController::class,'store']);
+            Route::get('/{order}', [OrderController::class,'show']);
+        });
     });
 });
 
 Route::get('/pages/{locale}/{slug}', [PageController::class,'pageByLocaleAndSlug']);
-Route::get('/{lang}/{slug}', [ProductController::class,'productByLocaleAndSlug']);
-Route::get('/search', [ProductController::class,'search']);
 Route::get('/products/', [ProductController::class,'allProducts']);
+Route::get('/{lang}/{slug}', [ProductController::class,'productByLocaleAndSlug']);
+Route::get('{lang}/upsell/{product}', [ProductController::class,'getUpsell']);
+Route::get('/search', [ProductController::class,'search']);
 
-Route::get('/products/search-by-category', [ProductController::class,'searchByCategory']);
+
 
 Route::get('/promocode/{code}', [PromocodeController::class,'checkPromocode']);
 Route::get('/delivery-methods', [DeliveryMethodController::class,'index']);

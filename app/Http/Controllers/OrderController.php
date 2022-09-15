@@ -11,6 +11,7 @@ use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\Promocode;
 use App\Models\Variant;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -155,16 +156,20 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Order $order)
+    public function show(Order $order): JsonResponse
     {
-
-        // Add order items to order
-        $order->items;
-        $order->address;
-        $order->paymentMethod;
-        $order->deliveryMethod;
-        $order->promocode;
-        return response()->json($order);
+        if (Auth::user()->isAdmin() || Auth::id() == $order->user_id) {
+            $order->items;
+            $order->address;
+            $order->paymentMethod;
+            $order->deliveryMethod;
+            $order->promocode;
+            return response()->json($order);
+        } else {
+            return response()->json([
+                'message' => 'You are not allowed to view this order',
+            ], 403);
+        }
     }
 
     /**

@@ -37,30 +37,10 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    public function search()
-    {
-        $default = [
-            'page' => 1,
-            'per_page' => 20,
-            'sort_by' => 'id',
-            'sort_direction' => 'desc',
-            'q' => '',
-        ];
-        $params = array_merge($default, request()->all());
-        $products = Product::with('images')
-            ->where('name_ru', 'like', '%'.$params['q'].'%')
-            ->orWhere('name_ro', 'like', '%'.$params['q'].'%')
-            ->orderBy($params['sort_by'], $params['sort_direction'])
-            ->paginate($params['per_page']);
-        $products->appends($params);
-
-        return response()->json($products);
-    }
-
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function searchByCategory(): JsonResponse
+    public function search(): JsonResponse
     {
         $default = [
             'page' => 1,
@@ -69,16 +49,36 @@ class ProductController extends Controller
             'sort_direction' => 'desc',
             'q' => '',
             'category_id' => '',
+            'min_price' => 0,
+            'max_price' => 999999999,
         ];
         $params = array_merge($default, request()->all());
+        $params['min_price'] = (int) $params['min_price'];
+        $params['max_price'] = (int) $params['max_price'];
+
         $products = Product::with('images')
-            ->where('name_ru', 'like', '%'.$params['q'].'%')
-            ->orWhere('name_ro', 'like', '%'.$params['q'].'%')
-            ->where('category_id', $params['category_id'])
+            ->where(function ($query) use ($params) {
+                if ($params['q']) {
+                    $query->where('name_ru', 'like', '%'.$params['q'].'%')
+                        ->orWhere('name_ro', 'like', '%'.$params['q'].'%');
+                }
+            })
+            ->where(function ($query) use ($params) {
+                if ($params['category_id']) {
+                    $query->where('category_id', $params['category_id']);
+                }
+            })
+            ->where(function ($query) use ($params) {
+                if ($params['min_price']) {
+                    $query->where('min_price', '>=', (int)$params['min_price']);
+                }
+                if ($params['max_price']) {
+                    $query->where('max_price', '<=', (int)$params['max_price']);
+                }
+            })
             ->orderBy($params['sort_by'], $params['sort_direction'])
             ->paginate($params['per_page'])
             ->appends($params);
-
         return response()->json($products);
     }
 
@@ -210,6 +210,7 @@ class ProductController extends Controller
      */
     public function productByLocaleAndSlug($lang, $slug): JsonResponse
     {
+
         $product = Product::where('slug_' . $lang, $slug)->first();
         if ($product) {
             $product->increment('views');
@@ -217,5 +218,22 @@ class ProductController extends Controller
         } else {
             return response()->json(['message' => 'Product not found'], 404);
         }
+    }
+
+    public function getUpsell($lang = 'ru', Product $product)
+    {
+        $upsell = $product->upsell();
+        return response()->json($upsell->map(function (Product $product) use ($lang) {
+            $minPrice = $product->variants->min('price');
+            $maxPrice = $product->variants->max('price');
+            return [
+                'id' => $product->id,
+                'name' => $product->{"name_$lang"},
+                'slug' => env('APP_URL'). "/product/" .$product->{'slug_' . $lang},
+                'min_price' => $minPrice,
+                'max_price' => $maxPrice,
+                'images' => $product->getUploadedImagesAttribute(),
+            ];
+        }));
     }
 }
