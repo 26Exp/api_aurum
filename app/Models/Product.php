@@ -234,4 +234,43 @@ class Product extends Model
         $this->save();
         return $this;
     }
+
+    /**
+     * @param string $lang
+     * @return array
+     */
+    public function getByLang(string $lang): array
+    {
+        $product = $this->toArray();
+        $product['name'] = $product['name_' . $lang];
+        $product['description'] = $product['description_' . $lang];
+        $product['slug'] = $product['slug_' . $lang];
+        $product['out_of_stock_text'] = $product['out_of_stock_text_' . $lang];
+        $product['meta_title'] = $product['meta_title_' . $lang];
+        $product['meta_description'] = $product['meta_description_' . $lang];
+        unset(
+            $product['name_ru'],
+            $product['name_ro'],
+            $product['description_ru'],
+            $product['description_ro'],
+            $product['slug_ru'],
+            $product['slug_ro'],
+            $product['out_of_stock_text_ru'],
+            $product['out_of_stock_text_ro'],
+            $product['meta_title_ru'],
+            $product['meta_title_ro'],
+            $product['meta_description_ru'],
+            $product['meta_description_ro'],
+            $product['slug'],
+        );
+
+        // add slug in another languages
+        if ($lang == 'ru') {
+            $product['alternate_url'] = env('APP_URL') . '/ro/' . $this->slug_ro;
+        } else {
+            $product['alternate_url'] = env('APP_URL') . '/ru/' . $this->slug_ru;
+        }
+
+        return $product;
+    }
 }

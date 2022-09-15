@@ -188,7 +188,6 @@ class ProductController extends Controller
             ->orderBy($params['sort_by'], $params['sort_direction'])
             ->paginate($params['per_page'])
             ->appends($params);
-
         return response()->json($products);
 //        return response()->json($products->map(function ($product) use ($lang) {
 //            $minPrice = $product->variants->min('price');
@@ -214,7 +213,7 @@ class ProductController extends Controller
         $product = Product::where('slug_' . $lang, $slug)->first();
         if ($product) {
             $product->increment('views');
-            return response()->json($product);
+            return response()->json($product->getByLang($lang));
         } else {
             return response()->json(['message' => 'Product not found'], 404);
         }
