@@ -87,7 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/pages/{locale}/{slug}', [PageController::class,'pageByLocaleAndSlug']);
 Route::get('/products/', [ProductController::class,'allProducts']);
-Route::get('/{lang}/{slug}', [ProductController::class,'productByLocaleAndSlug']);
+//Route::get('/{lang}/{slug}', [ProductController::class,'productByLocaleAndSlug']);
 Route::get('{lang}/upsell/{product}', [ProductController::class,'getUpsell']);
 Route::get('/search', [ProductController::class,'search']);
 

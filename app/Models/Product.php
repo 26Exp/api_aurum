@@ -280,4 +280,16 @@ class Product extends Model
             ->limit(4)
             ->get();
     }
+
+    // get min price of product variants
+    public function getMinPrice()
+    {
+        return $this->variants()->min('price');
+    }
+
+    // get max price of product variants
+    public function getMaxPrice()
+    {
+        return $this->variants()->max('price');
+    }
 }

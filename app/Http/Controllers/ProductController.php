@@ -34,6 +34,14 @@ class ProductController extends Controller
             ->paginate($params['per_page']);
         $products->appends($params);
 
+        foreach ($products as $product) {
+            if ($product->min_price == $product->max_price) {
+                (int)$product->price = $product->min_price;
+            } else {
+                (int)$product->price = $product->min_price . ' - ' . $product->max_price;
+            }
+        }
+
         return response()->json($products);
     }
 
