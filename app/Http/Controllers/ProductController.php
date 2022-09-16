@@ -35,6 +35,7 @@ class ProductController extends Controller
         $products->appends($params);
 
         foreach ($products as $product) {
+            $product->stock = $product->variants()->sum('stock');
             if ($product->min_price == $product->max_price) {
                 (int)$product->price = $product->min_price;
             } else {
