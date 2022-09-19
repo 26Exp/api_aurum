@@ -85,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+Route::get('/products/top100', [ProductController::class,'top100']);
 Route::get('/pages/{locale}/{slug}', [PageController::class,'pageByLocaleAndSlug']);
 Route::get('/products/', [ProductController::class,'allProducts']);
 Route::get('/{lang}/{slug}', [ProductController::class,'productByLocaleAndSlug']);

@@ -245,4 +245,20 @@ class ProductController extends Controller
             ];
         }));
     }
+
+    public function top100()
+    {
+        $products = Product::where('status', Product::STATUS_PUBLISHED)
+            ->orderBy('views', 'desc')
+            ->take(100)
+            ->get();
+        $products = $products->map(function ($product) {
+            return [
+                'slug_ru' => $product->slug_ru,
+                'slug_ro' => $product->slug_ro,
+            ];
+        });
+
+        return response()->json($products);
+    }
 }
