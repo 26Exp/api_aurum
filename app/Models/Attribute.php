@@ -10,6 +10,9 @@ class Attribute extends Model
 {
     use HasFactory;
 
+    public const SIZE = 1;
+    public const MATERIAL = 2;
+
     public $timestamps = false;
 
     protected $fillable = [

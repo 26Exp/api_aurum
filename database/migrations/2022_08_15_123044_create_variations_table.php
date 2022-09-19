@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('variations', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('product_id')->index();
             $table->unsignedBigInteger('attribute_id')->index();
             $table->unsignedBigInteger('attribute_value_id')->index();

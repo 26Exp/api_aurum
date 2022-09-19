@@ -105,6 +105,7 @@ class Product extends Model
         return $this->category()->first();
     }
 
+
     protected static function boot(): void
     {
         parent::boot();
