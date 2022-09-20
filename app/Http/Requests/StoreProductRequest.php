@@ -51,7 +51,7 @@ class StoreProductRequest extends FormRequest
             'variants.*.price' => 'required|numeric',
             'variants.*.stock' =>'required|integer',
             'variants.*.sku' => 'nullable|unique:variants,sku',
-            'variants.*.name' => 'nullable|string|min:3|max:256',
+            'variants.*.name' => 'nullable|string|min:1|max:256',
             'attributes' => 'nullable|array',
             'groups' => 'nullable|array',
             'groups.*' => 'required|integer|exists:groups,id',

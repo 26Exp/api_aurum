@@ -45,14 +45,16 @@ class UpdateProductRequest extends FormRequest
             'stock' => 'integer',
             'status' => 'nullable|integer',
             'variants' => 'required|array',
+            'variants.*.id' => 'nullable|integer|exists:variants,id',
             'variants.*.attributes' => 'required|array',
-            'variants.*.attributes.*.id' => 'required|integer|exists:attributes,id',
-            'variants.*.attributes.*.value_id' => 'required|integer|exists:attribute_values,id',
+            'variants.*.attributes.*.attribute_id' => 'required|integer|exists:attributes,id',
+            'variants.*.attributes.*.attribute_value_id' => 'required|integer|exists:attribute_values,id',
             'variants.*.price' => 'required|numeric',
             'variants.*.stock' =>'required|integer',
-            'variants.*.sku' => 'required|string|max:255|unique:variants,sku',
-            'variants.*.name' => 'nullable|string|min:3|max:256',
+            'variants.*.name' => 'nullable|string|min:1|max:256',
             'attributes' => 'nullable|array',
+            'groups' => 'nullable|array',
+            'groups.*' => 'required|integer|exists:groups,id',
         ];
     }
 }

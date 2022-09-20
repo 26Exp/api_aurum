@@ -324,4 +324,59 @@ class Product extends Model
 
         return $this;
     }
+
+    public function updateVariants(array $variants): Product
+    {
+        $actualVariantsIDs = [];
+        foreach ($variants as $variant) {
+            if (isset($variant['id'])) {
+
+                // check if SKU is unique
+                if (Variant::where('sku', $variant['sku'])->where('id', '!=', $variant['id'])->first()) {
+                    throw new \Exception('SKU must be unique');
+                }
+
+                $ProductVariant = Variant::find($variant['id']);
+                $ProductVariant->update([
+                    'name' => $variant['name'],
+                    'product_id' => (int)$this->id,
+                    'price' => (double)$variant['price'],
+                    'stock' => (int)$variant['stock'],
+                    'sku' => (string)$variant['sku'],
+                ]);
+            } else {
+                // check if SKU is unique
+                if (Variant::where('sku', $variant['sku'])->first()) {
+                    throw new \Exception('SKU must be unique');
+                }
+
+                $ProductVariant = Variant::create([
+                    'name' => $variant['name'],
+                    'product_id' => (int)$this->id,
+                    'price' => (double)$variant['price'],
+                    'stock' => (int)$variant['stock'],
+                    'sku' => (string)$variant['sku'],
+                ]);
+
+                foreach ($variant['attributes'] as $attribute) {
+                    Variation::create([
+                        'variant_id' => (int)$ProductVariant->id,
+                        'product_id' => (int)$this->id,
+                        'attribute_id' => (int)$attribute['attribute_id'],
+                        'attribute_value_id' => (int)$attribute['attribute_value_id'],
+                    ]);
+                }
+            }
+            $actualVariantsIDs[] = $ProductVariant->id;
+        }
+
+        $variants = $this->variants()->get();
+        foreach ($variants as $variant) {
+            if (!in_array($variant->id, $actualVariantsIDs)) {
+                $variant->delete();
+            }
+        }
+
+        return $this;
+    }
 }

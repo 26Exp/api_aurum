@@ -138,8 +138,10 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $product->update($request->validated());
+        $product->updateVariants($request->variants);
         $product->attachImages($request->images ?? []);
         $product->updateGroups($request->groups ?? []);
+
 
         return $product;
     }
