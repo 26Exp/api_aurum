@@ -22,7 +22,6 @@ class Product extends Model
     public const HAS_BADGE = true;
     public const HAS_NO_BADGE = false;
     public const HAS_IMAGE = true;
-
     public const STATUSES = [
         self::STATUS_DRAFT => 'Draft',
         self::STATUS_PUBLISHED => 'Published',
@@ -56,7 +55,6 @@ class Product extends Model
         'min_price',
         'max_price',
     ];
-
     protected $casts = [
         'has_variation' => 'boolean',
         'has_discount' => 'boolean',
@@ -77,15 +75,15 @@ class Product extends Model
         'min_price' => 'float',
         'max_price' => 'float',
     ];
-
     protected $appends = [
+        'groups',
         'uploaded_images',
         'variants',
     ];
 
-    public function getUploadedImagesAttribute()
+    public function getUploadedImagesAttribute(): array
     {
-        return $this->images()->count() ? $this->images()->get() :
+        return $this->images()->count() ? $this->images()->get()->toArray() :
             [
                 'id' => null,
                 'path' => null,
@@ -95,16 +93,29 @@ class Product extends Model
             ];
     }
 
-    public function getManufacturerAttribute()
+    /**
+     * @return Manufacturer|null
+     */
+    public function getManufacturerAttribute(): ?Manufacturer
     {
-        return $this->manufacturer()->first();
+        return $this->manufacturer()->count() ? $this->manufacturer()->first() : null;
     }
+
 
     public function getCategoryAttribute()
     {
         return $this->category()->first();
     }
 
+    public function getGroupsAttribute()
+    {
+        return $this->groupProducts()->count() ? $this->groupProducts()->get()->pluck('id')->toArray() : [];
+    }
+
+    public function groupProducts(): HasMany
+    {
+        return $this->hasMany(GroupProduct::class);
+    }
 
     protected static function boot(): void
     {
@@ -118,7 +129,6 @@ class Product extends Model
 
         });
     }
-
 
     /**
      * @param string $value
@@ -188,19 +198,19 @@ class Product extends Model
     {
         foreach ($variants as $variant) {
             $ProductVariant = Variant::create([
-                'name'       => $variant['name'],
+                'name' => $variant['name'],
                 'product_id' => (int)$this->id,
-                'price'      => (double)$variant['price'],
-                'stock'      => (int)$variant['stock'],
-                'sku'        => (string)$variant['sku'],
+                'price' => (double)$variant['price'],
+                'stock' => (int)$variant['stock'],
+                'sku' => (string)$variant['sku'],
             ]);
 
             foreach ($variant['attributes'] as $attribute) {
                 Variation::create([
-                    'product_id'         => (int)$this->id,
-                    'attribute_id'       => (int)$attribute['attribute_id'],
+                    'product_id' => (int)$this->id,
+                    'attribute_id' => (int)$attribute['attribute_id'],
                     'attribute_value_id' => (int)$attribute['attribute_value_id'],
-                    'variant_id'         => (int)$ProductVariant->id,
+                    'variant_id' => (int)$ProductVariant->id,
                 ]);
             }
         }
@@ -292,5 +302,26 @@ class Product extends Model
     public function getMaxPrice()
     {
         return $this->variants()->max('price');
+    }
+
+    public function updateGroups(array $groups): Product
+    {
+        $groupProducts = GroupProduct::where('product_id', $this->id)->get();
+        foreach ($groupProducts as $groupProduct) {
+            if (!in_array($groupProduct->id, $groups)) {
+                $groupProduct->delete();
+            }
+        }
+
+        foreach ($groups as $group) {
+            if (!GroupProduct::where('group_id', $group)->where('product_id', $this->id)->first()) {
+                GroupProduct::create([
+                    'group_id' => $group,
+                    'product_id' => $this->id,
+                ]);
+            }
+        }
+
+        return $this;
     }
 }

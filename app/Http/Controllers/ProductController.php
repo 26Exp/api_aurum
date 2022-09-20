@@ -103,6 +103,7 @@ class ProductController extends Controller
             $product = Product::create($request->validated());
             $product->attachImages($request->images ?? []);
             $product->attachVariants($request->variants);
+            $product->updateGroups($request->groups ?? []);
 
             return response()->json([
                 'message' => 'Product created successfully',
@@ -138,6 +139,7 @@ class ProductController extends Controller
     {
         $product->update($request->validated());
         $product->attachImages($request->images ?? []);
+        $product->updateGroups($request->groups ?? []);
 
         return $product;
     }
